@@ -7,5 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ashish Aggarwal",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "deferred": "^0.7.5",
+    "express": "^4.14.0",
+    "ftp": "^0.3.10",
+    "ftp-client": "^0.2.2",
+    "mongoose": "^4.5.10",
+    "request": "^2.74.0",
+    "xml2js": "^0.4.17"
+  }
 }
