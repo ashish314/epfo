@@ -11,7 +11,7 @@ function readXmlData(){
   this.dataArray = [];
   this.totalRecords = 0;
   this.recordsRead = 0;
-  this.dataErrors = []; 
+  this.dataErrors = [];
 };
 
 readXmlData.requiredKeys = {

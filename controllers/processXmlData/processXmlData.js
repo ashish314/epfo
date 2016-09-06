@@ -8,18 +8,19 @@ function processXmlData(){
 
 processXmlData.prototype.init = function (){
   var initDefer = new deferred();
-  return defer.resolve();
+  return initDefer.resolve();
 };
 
 processXmlData.prototype.processRecord = function (record,options){
-  var processDefer = new deferred();
+  var processDefer = new deferred(),
+      updatedRecord = record;
   if(!record)
     return processDefer.reject("No data to process");
 
   else if(record){
     this.record = record;
     this.totalProcessed++;
-    return processDefer.resolve();
+    return processDefer.resolve(updatedRecord);
   }
 };
 
