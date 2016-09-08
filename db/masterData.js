@@ -5,6 +5,8 @@ function getSchema() {
     PARTNER   : {type : String},
     TYPE      : {type : String},
     BPKIND    : {type : String},
+    username  : {type : String},
+    password  : {type : String}
   });
   return schema;
 };

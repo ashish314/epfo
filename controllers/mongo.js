@@ -19,7 +19,7 @@ mongo.prototype.init = function() {
   var initDefer = new deferred(),
       self      = this;
 
-  if(this.conn)
+  if(this.connected)
     return initDefer.resolve();
 
   var options = {

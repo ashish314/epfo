@@ -23,10 +23,10 @@ masterDataProcessor.prototype.init = function (){
   var self      = this,
       initDefer = new deferred();
 
-  this.ftpFetcherObj      = this.ftpFetcherObj   || ftpFetcher();
-  this.mongoObj           = this.mongoObj        || mongo();
-  this.readXmlDataObj     = this.readXmlDataObj  || new readXmlData();
-  this.storeXmlDataObj    = this.storeXmlDataObj || new storeXmlData();
+  this.ftpFetcherObj      = this.ftpFetcherObj     || ftpFetcher();
+  this.mongoObj           = this.mongoObj          || mongo();
+  this.readXmlDataObj     = this.readXmlDataObj    || new readXmlData();
+  this.storeXmlDataObj    = this.storeXmlDataObj   || new storeXmlData();
   this.processXmlDataObj  = this.processXmlDataObj || new processXmlData();
 
 // todo , seperate init and other functionality so that 
