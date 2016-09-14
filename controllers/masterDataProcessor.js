@@ -16,7 +16,7 @@ function masterDataProcessor(){
   this.readXmlDataObj     = null;
   this.processXmlDataObj  = null;
   this.storeXmlDataObj    = null;
-  this.initialized         = false;
+  this.initialized        = false;
 };
 
 masterDataProcessor.prototype.init = function (){
@@ -78,7 +78,7 @@ masterDataProcessor.prototype.start = function (defer){
   })
   .then(function (updatedRecord){
     // record updated now store it.
-    return self.storeXmlDataObj.storeRecord();
+    return self.storeXmlDataObj.storeRecord(updatedRecord,{});
   })
   .then(function (){
     // saved successfully and still more to go.
@@ -103,8 +103,8 @@ masterDataProcessor.prototype.end = function (defer){
   defer.resolve();
 };
 
-/*
-test code
+
+// test code
 var abc = new masterDataProcessor();
 abc.init().then(function (){
   return abc.start();
@@ -112,7 +112,7 @@ abc.init().then(function (){
   console.log(err);
   // at this point all data has been inserted in db.
 });
-*/
+
 
 
 module.exports = exports = masterDataProcessor;

@@ -1,4 +1,5 @@
-var redis         = require('redis');
+var redis         = require('redis'),
+    config        = require(__dirname + '/../config.js');
 
 var redisClient = null,
     connected   = false;
@@ -8,7 +9,7 @@ var connectRedis = function connectRedis(){
     return redisClient;
   }
   else{
-    redisClient = redis.createClient('redis://localhost:6379');
+    redisClient = redis.createClient(config.redis);
 
     redisClient.on('error',function (err){
       console.log(err);

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+        <TAB>
+            <FINAL>
+                <BP>1001001542</BP>
+                <TYPE>2</TYPE>
+                <BPKIND>0003</BPKIND>
+                <BUGROUP>UNIT</BUGROUP>
+                <BPEXT>HYD/2151</BPEXT>
+                <AUGRP/>
+                <TITLE/>
+                <NLAST>NIDHI</NLAST>
+                <NFIRST>CMPFO Oganisation</NFIRST>
+                <NMID>CMPFO</NMID>
+                <NFAT/>
+                <NFUL/>
+                <GENDER/>
+                <MSTATUS/>
+                <NATIO/>
+                <BDATE/>
+                <DDATE/>
+                <RELIGION/>
+                <CTITLE>02</CTITLE>
+                <C_NFIRST>prashant</C_NFIRST>
+                <C_NMID>kumar</C_NMID>
+                <C_NLAST>sharma</C_NLAST>
+                <C_DEGI>GM</C_DEGI>
+                <ADDNUM>0002230547</ADDNUM>
+                <BKVID>HYD</BKVID>
+                <BANKL>SBIH12345</BANKL>
+                <BANKN>54856568556</BANKN>
+                <BKONT/>
+                <KOINH/>
+                <IDTYP>HYD</IDTYP>
+                <IDNUM>55846984684</IDNUM>
+                <INSTUE/>
+                <EDATE/>
+                <VAD_FROM/>
+                <VAD_TO/>
+                <IDCOUNTRY/>
+                <IDREGION/>
+                <RELNR/>
+                <DEPEN/>
+                <RDATE/>
+                <RDATEF/>
+                <RELTYP/>
+                <NPER/>
+                <DATE_F>00010101</DATE_F>
+                <DATE_T>99991231</DATE_T>
+                <CITY1/>
+                <CITY2/>
+                <PCODE>110020</PCODE>
+                <STREET>Kalki Devi Marg</STREET>
+                <HNUM/>
+                <SRT1/>
+                <COUNTRY>IN</COUNTRY>
+                <REGION>1</REGION>
+                <TELNUM>8977461628</TELNUM>
+                <TJCODE>I401</TJCODE>
+                <EMAIL>krishna.e@gmail.com</EMAIL>
+                <BEZ50/>
+                <BEZ50_2/>
+                <RTITL/>
+                <RUNIT/>
+                <PAN>ABCD0912L</PAN>
+                <ADDHAR/>
+                <OSSNO/> </FINAL>
+            <FINAL>
+                <BP>2000000022</BP>
+                <TYPE>1</TYPE>
+                <BPKIND>0001</BPKIND>
+                <BUGROUP>MEMB</BUGROUP>
+                <BPEXT>D/91/6</BPEXT>
+                <AUGRP>PFA</AUGRP>
+                <TITLE/>
+                <NLAST>CHOUDHURY</NLAST>
+                <NFIRST>ASIT KUMAR</NFIRST>
+                <NMID>Kr.</NMID>
+                <NFAT>Late S.K.Chowdhury</NFAT>
+                <NFUL/>
+                <GENDER>Male</GENDER>
+                <MSTATUS>Married</MSTATUS>
+                <NATIO>IN</NATIO>
+                <BDATE>19471112</BDATE>
+                <DDATE/>
+                <RELIGION>HINDU</RELIGION>
+                <CTITLE/>
+                <C_NFIRST/>
+                <C_NMID/>
+                <C_NLAST/>
+                <C_DEGI/>
+                <ADDNUM>0000022382</ADDNUM>
+                <BKVID>01</BKVID>
+                <BANKL>SBIDANKUNI</BANKL>
+                <BANKN>10947536111</BANKN>
+                <BKONT/>
+                <KOINH>MR, ASIT KUMAR CHOUDHURY</KOINH>
+                <IDTYP>KOL</IDTYP>
+                <IDNUM>D/91/6</IDNUM>
+                <INSTUE/>
+                <EDATE>19780328</EDATE>
+                <VAD_FROM/>
+                <VAD_TO></VAD_TO>
+                <IDCOUNTRY>IN</IDCOUNTRY>
+                <IDREGION>25</IDREGION>
+                <RELNR>000000088132</RELNR>
+                <DEPEN>5000044076</DEPEN>
+                <RDATE>99991231</RDATE>
+                <RDATEF>20071130</RDATEF>
+                <RELTYP>ZPS001</RELTYP>
+                <NPER> 100.0000000</NPER>
+                <DATE_F>00010101</DATE_F>
+                <DATE_T>99991231</DATE_T>
+                <CITY1>HOOGHLY.</CITY1>
+                <CITY2/>
+                <PCODE>712311</PCODE>
+                <STREET>STATION PALLY, CHOUDHURY KUTIR</STREET>
+                <HNUM/>
+                <SRT1/>
+                <COUNTRY>IN</COUNTRY>
+                <REGION>25</REGION>
+                <TELNUM/>
+                <TJCODE>IN00</TJCODE>
+                <EMAIL>asit@gmail.com</EMAIL>
+                <BEZ50>Has Nominee For PS Scheme</BEZ50>
+                <BEZ50_2>Is Nominee For PS Scheme</BEZ50_2>
+                <RTITL>Nominee For PS Scheme</RTITL>
+                <RUNIT>1001000243</RUNIT>
+                <PAN>ABCD0812I</PAN>
+                <ADDHAR>567812349876</ADDHAR>
+                <OSSNO>1234567890</OSSNO>
+            </FINAL>
+        </TAB>
+    </asx:values>
+</asx:abap>

@@ -1,3 +1,14 @@
+/*
+  How passport authentication works.
+  1. see the require statements and middlewares to use (has to be in same order).
+  2. passport has a method authenticate which when called passes the pointer to
+     the method where you has implemented a strategy (local in this case).
+  3. serialize is to set what needs to stored in session (not whole user object).
+  4. deserialize is for subsequent requests, it takes whatever in session and
+     fetches data to be placed in req.user.
+  5. for storing session in redis use redis store, it requires a running redis client
+      and should be instructed to express-session middleware. 
+*/
 var _             = require('lodash'),
     APP           = require(__dirname + '/../../app.js'),
     passport      = require('passport'),      // required for local authentication.

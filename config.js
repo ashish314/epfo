@@ -17,7 +17,8 @@ var config = {
     host : 'localhost',
     port : '27017',
     database : 'test'
-  }
+  },
+  redis : "redis://localhost:6379",
 };
 
 module.exports = exports = config;

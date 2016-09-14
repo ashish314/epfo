@@ -43,7 +43,7 @@ storeXmlData.prototype.storeRecord = function (record,options){
 };
 
 storeXmlData.prototype.end = function (){
-  console.log("end");
+  console.log("store data end called");
 };
 
 module.exports = exports = storeXmlData;

@@ -15,11 +15,10 @@ function readXmlData(){
 };
 
 readXmlData.requiredKeys = {
-  'PARTNER' : '',
+  'BP' : '',
   'TYPE'    : '',
   'BPKIND'  : '',
 };
-
 
 readXmlData.prototype.init = function() {
   var self  = this,
@@ -46,26 +45,39 @@ readXmlData.prototype.init = function() {
 };
 
 readXmlData.prototype.normalizeData = function (data,defer,options){
-  var filterJsonArray = [],
-      self            = this;
+  var self            = this;
   // ensure xml data is in correct format.
   try {
-    filterJsonArray = data['asx:abap']['asx:values'][0]['TAB'][0]['item'];
+    data = data['asx:abap']['asx:values'][0]['TAB'][0]['FINAL'];
   }
   catch(e){
     return defer.reject("XML data format issues");
   }
 
-  self.totalRecords = filterJsonArray.length;
-  filterJsonArray.forEach(function (eachDataRecord){
-    if(!self.checkRequiredFields(readXmlData.requiredKeys,eachDataRecord)){
-      self.dataErrors.push(eachDataRecord);
-    }
-    else{
-      self.dataArray.push(eachDataRecord);
-    }
+  data.forEach(function (eachRecord) {
+    var dbJson = {};
+    dbJson['PARTNER']         = eachRecord['BP'][0] || null;
+    dbJson['TYPE']            = eachRecord['TYPE'][0] || null;
+    dbJson['BPEXT']           = eachRecord['BPEXT'][0] || null;
+    dbJson['FULL_NAME']       = eachRecord['FULLNAME'][0] || null;
+    dbJson['ZZTITLE1']        = eachRecord['CTITLE'][0] || null;
+    dbJson['ZZFULL_NAME']     = eachRecord['D_FULLNAME'][0] || null;
+    dbJson['ZZDESIGNATION1']  = eachRecord['C_DEGI'][0] || null;
+    dbJson['CITY1']           = eachRecord['CITY1'][0] || null;
+    dbJson['CITY2']           = eachRecord['CITY2'][0] || null;
+    dbJson['POST_CODE1']      = eachRecord['PCODE'][0] || null;
+    dbJson['STREET']          = eachRecord['STREET'][0] || null;
+    dbJson['HOUSE_NUM1']      = eachRecord['HNUM'][0] || null;
+    dbJson['STR_SUPPL1']      = eachRecord['SRT1'][0] || null;
+    dbJson['COUNTRY']         = eachRecord['COUNTRY'][0] || null;
+    dbJson['REGION']          = eachRecord['REGION'][0] || null;
+    dbJson['TEL_NUM']         = eachRecord['TELNUM'][0] || null;
+    dbJson['ADDHAR']          = eachRecord['ADDHAR'][0] || null;
+    dbJson['PAN']             = eachRecord['PAN'][0] || null;
+    self.dataArray.push(dbJson);  
   });
-
+  
+  self.totalRecords = self.dataArray.length;
   this.initialized = true;
   defer.resolve();
 };
@@ -111,6 +123,6 @@ module.exports = exports = readXmlData;
 
 // fs.readFile(config.masterDataDownloadPath,'utf8',function (err,data){
 //   parser.parseString(data,function (err,result){
-//     console.log(result['asx:abap']['asx:values'][0]['TAB'][0]);
+//     console.log(result['asx:abap']['asx:values'][0]['TAB'][0]['FINAL']);
 //   });
 // });

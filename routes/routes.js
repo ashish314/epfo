@@ -5,7 +5,7 @@ var EXPRESS               = require('express'),
     _                     = require('lodash'),
     REQUEST               = require('request'),
     deferred              = require('deferred'),
-    authenticate           = require(__dirname + '/../controllers/userAuthentication/userAuthentication.js'),
+    authenticate          = require(__dirname + '/../controllers/userAuthentication/userAuthentication.js'),
     mongoObj              = require(__dirname + '/../controllers/mongo.js')();
 
 function apiRoutes (){
@@ -26,9 +26,9 @@ apiRoutes.prototype.init = function (){
     .then(function (){
       self.mongoObj = mongoObj;
       // register routes and their controller functions
-      self.router.post('/signupEmployer',self.signUpEmployee.bind(self));
+      self.router.post('/signupEmployer',self.signUpEmployer.bind(self));
       self.router.post('/signinEmployer',self.signInEmployer.bind(self));
-      self.router.post('/checkLogin'    ,self.checkLogin.bind(self));
+      self.router.get('/'               ,self.homepage.bind(self));
       self.router.get('/logout'        ,self.logout.bind(self));
       initDefer.resolve();
 
@@ -38,6 +38,22 @@ apiRoutes.prototype.init = function (){
   }
 
   return initDefer.promise;
+};
+
+
+function query_on_uid_or_legacy(uid,legacy_number,cb){
+  var self      = this;
+
+  if(uid){
+    self.mongoObj.masterDataModel.findOne({PARTNER : uid}, function (err,user){
+      return cb(err,user);
+    });
+  }
+  else if(legacy_number){
+    self.mongoObj.masterDataModel.findOne({BPEXT : legacy_number},function (err,user){
+      return cb(err,user);
+    });
+  }
 };
 
 apiRoutes.prototype.signInEmployer = function (req,res,next){
@@ -72,47 +88,86 @@ apiRoutes.prototype.logout = function (req,res,next) {
   }
 };
 
-apiRoutes.prototype.checkLogin = function (req,res,next) {
-  console.log(req.user);
-}
+apiRoutes.prototype.homepage = function (req,res,next) {
+  console.log("came here");
+  res.render()
+};
 
-apiRoutes.prototype.signUpEmployee = function (req,res,next){
-  
-  if(_.isEmpty(req.body || !req.body.username || !req.body.password)){
+apiRoutes.prototype.autoFillForm = function (req,res,next){
+  // will be used to fetch details for signup form.
+  // in body we will get uid or cmpfo need to provide name,address.
+  if(_.isEmpty(req.body)){
     return this.errorResponse(res,400,"Required fields are blank");
   }
 
+  if(_.isEmpty(req.body.uid && _.isEmpty(req.body.legacy_number))){
+    return this.errorResponse(res,404,"uid or legacy number is required");
+  }
+
+  var userData = null,
+      self     = this;
+
+  query_on_uid_or_legacy.bind(this)(req.body.uid,req.body.legacy_number,function (err,user){
+    if(err){
+      return self.errorResponse(res,500,'Internal server error');
+    }
+    else if(_.isEmpty(user)){
+     return self.errorResponse(res,404,'No user found'); 
+    }
+    else{
+      return self.successResponse(res,200,'successful',user);
+    }
+  });
+};
+
+apiRoutes.prototype.signUpEmployer = function (req,res,next){
+
+  if(_.isEmpty(req.body)){
+    return this.errorResponse(res,400,"Required fields are blank");
+  }
+  if(_.isEmpty(req.body.uid)){
+    return this.errorResponse(res,400,"Uid cannot be blank");
+  }
+  if(_.isEmpty(req.body.email)){
+    return this.errorResponse(res,400,"Email cannot be blank");
+  }
+  if(_.isEmpty(req.body.password)){
+    return this.errorResponse(res,400,"Password cannot be blank");
+  }
+  if(_.isEmpty(req.body.mobile)){
+    return this.errorResponse(res,400,"Mobile cannot be blank");
+  }
   if(!this.mongoObj){
     return this.errorResponse(res,500,'Internal server error');
   }
-  var username = req.body.username,
+  var uid      = req.body.uid,
       password = req.body.password,
+      email    = req.body.email,
+      mobile   = req.body.mobile,
       self     = this;
 
   // check for these details in database.
-  this.mongoObj.masterDataModel.findOne({username : username},function (err,result){
+  this.mongoObj.masterDataModel.findOne({PARTNER : uid},function (err,result){
     if(err){
       console.log(err);
       return self.errorResponse(res,500,'Internal server error');
     }
     else if(!_.isEmpty(result)){
-      return self.errorResponse(res,400,'Username is already taken');
+      return self.errorResponse(res,400,'Uid is already occupied');
     }
     else{
-      // now insert fields in db.
-      self.mongoObj.masterDataModel.create({username:username,password:password},function (err,result){
+      // now update fields in db.
+      result.UPDATED_TEL_NUM = mobile;
+      result.UPDATED_EMAIL   = email;
+      result.password        = password;
+      result.save(function (err){
         if(err){
-          return self.errorResponse(res,500,'Internal server error');
+          return self.errorResponse(res , 500 ,'Internal server error');
         }
         else{
-          // we need to log him in and redirect.
-          var data = {
-            username : username,
-            password : password
-          };
-          return self.successResponse(res,200,'Sign up success',data);
+          return self.successResponse(res, 200, 'Sign up successful', result);
         }
-      });
+      }); 
     }
   });   
 };
