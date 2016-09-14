@@ -11,7 +11,9 @@ var config = {
   },
 
   masterDataDownloadPath  : '/Users/ashish/epfo/public/masterDataFiles/file_name.xml',
-  masterDataFilePathOnSAP : 'file_name.xml',
+  masterDataFilePathOnSAP : 'BUT000_20160914155621.xml',
+  // masterDataFilePathOnSAP : 'file_name.xml',
+
 
   mongo : {
     host : 'localhost',

@@ -26,10 +26,13 @@ apiRoutes.prototype.init = function (){
     .then(function (){
       self.mongoObj = mongoObj;
       // register routes and their controller functions
+      self.router.get('/'               ,self.homepage.bind(self));
       self.router.post('/signupEmployer',self.signUpEmployer.bind(self));
       self.router.post('/signinEmployer',self.signInEmployer.bind(self));
-      self.router.get('/'               ,self.homepage.bind(self));
-      self.router.get('/logout'        ,self.logout.bind(self));
+      self.router.get('/autoFill'  ,self.autoFillForm.bind(self));
+      self.router.get('/logout'         ,self.logout.bind(self));
+      self.router.get('/signup_employer', self.signup_employer.bind(self));
+      self.router.get('/signup_member'  , self.signup_member.bind(self));
       initDefer.resolve();
 
     },function (err){
@@ -43,13 +46,13 @@ apiRoutes.prototype.init = function (){
 
 function query_on_uid_or_legacy(uid,legacy_number,cb){
   var self      = this;
-
   if(uid){
     self.mongoObj.masterDataModel.findOne({PARTNER : uid}, function (err,user){
       return cb(err,user);
     });
   }
   else if(legacy_number){
+    console.log(legacy_number);
     self.mongoObj.masterDataModel.findOne({BPEXT : legacy_number},function (err,user){
       return cb(err,user);
     });
@@ -78,6 +81,7 @@ apiRoutes.prototype.signInEmployer = function (req,res,next){
   }
 };
 
+
 apiRoutes.prototype.logout = function (req,res,next) {
   if(!req.user){
     this.errorResponse(res,400,"user not logged in");
@@ -89,35 +93,39 @@ apiRoutes.prototype.logout = function (req,res,next) {
 };
 
 apiRoutes.prototype.homepage = function (req,res,next) {
-  console.log("came here");
-  res.render()
+  console.log("came here on homepage");
 };
 
 apiRoutes.prototype.autoFillForm = function (req,res,next){
   // will be used to fetch details for signup form.
   // in body we will get uid or cmpfo need to provide name,address.
-  if(_.isEmpty(req.body)){
-    return this.errorResponse(res,400,"Required fields are blank");
-  }
-
-  if(_.isEmpty(req.body.uid && _.isEmpty(req.body.legacy_number))){
+  if(_.isEmpty(req.query) &&_.isEmpty(req.query.uid && _.isEmpty(req.query.legacy_number))){
     return this.errorResponse(res,404,"uid or legacy number is required");
   }
 
-  var userData = null,
-      self     = this;
+  var uid           = req.query.uid,
+      legacy_number = req.query.legacy_number,
+      self          = this;
 
-  query_on_uid_or_legacy.bind(this)(req.body.uid,req.body.legacy_number,function (err,user){
+  query_on_uid_or_legacy.bind(this)(uid,legacy_number,function (err,user){
     if(err){
       return self.errorResponse(res,500,'Internal server error');
     }
     else if(_.isEmpty(user)){
-     return self.errorResponse(res,404,'No user found'); 
+     return self.errorResponse(res,404,'uid or legacy number not valid'); 
     }
     else{
       return self.successResponse(res,200,'successful',user);
     }
   });
+};
+
+apiRoutes.prototype.signup_employer = function (req,res,next){
+  return res.render(__dirname + '/../public/employer.html');
+};
+
+apiRoutes.prototype.signup_member = function (req,res,next){
+  return res.render(__dirname + '/../public/member.html');
 };
 
 apiRoutes.prototype.signUpEmployer = function (req,res,next){

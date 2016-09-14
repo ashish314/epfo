@@ -32,7 +32,7 @@ APP.use(passport.initialize());
 APP.use(passport.session());
 
 passport.use(new LocalStrategy({
-  usernameField : 'username',
+  usernameField : 'uid',
   passwordField : 'password' 
 },function (username,password,done){
   // check for username and passowrd match.

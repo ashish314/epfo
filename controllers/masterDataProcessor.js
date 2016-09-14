@@ -105,13 +105,13 @@ masterDataProcessor.prototype.end = function (defer){
 
 
 // test code
-var abc = new masterDataProcessor();
-abc.init().then(function (){
-  return abc.start();
-},function (err){
-  console.log(err);
-  // at this point all data has been inserted in db.
-});
+// var abc = new masterDataProcessor();
+// abc.init().then(function (){
+//   return abc.start();
+// },function (err){
+//   console.log(err);
+//   // at this point all data has been inserted in db.
+// });
 
 
 

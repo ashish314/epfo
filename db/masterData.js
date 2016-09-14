@@ -6,10 +6,7 @@ function getSchema() {
         PARTNER         : { type : String }, // uid
         TYPE            : { type : String }, // member/employer type
         BPEXT           : { type : String }, // legacy/cmpfo (old)
-        NAME_LAST       : { type : String }, // last name
-        NAME_FIRST      : { type : String }, // first name
-        NAME_MIDDLE     : { type : String }, // middle name
-        NAME1_TEXT      : { type : String }, // full name
+        FULL_NAME       : { type : String }, // full name
         ZZTITLE1        : { type : String }, // designated person.
         ZZFULL_NAME     : { type : String }, // designated person name
         ZZDESIGNATION1  : { type : String }, // designation,

@@ -8,7 +8,8 @@ var EXPRESS       = require('express'),
 
 APP.use(bodyParser.urlencoded({extended:true}));
 APP.use(bodyParser.json());
-APP.use(EXPRESS.static(__dirname + '/public/html/'))
+APP.engine('html', require('ejs').renderFile);
+APP.use(EXPRESS.static(__dirname + '/public/'));
 
 ROUTER.init()
 .then(function (){ 

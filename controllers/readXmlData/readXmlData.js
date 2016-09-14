@@ -28,6 +28,7 @@ readXmlData.prototype.init = function() {
     this.parser = new xml2js.Parser();
 
   // now read file.
+  console.log(this.filePath);
   fs.readFile(this.filePath,'utf8',function (err,fileData){
     if(err)
       return defer.reject(err);
