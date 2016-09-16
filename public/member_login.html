@@ -70,46 +70,39 @@
   <!-- </div> -->
   
     
-  <form>
-    <h1>Please Fill the following details <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
+  <form method='post' action="http://localhost:8000/signinMember">
+    <h1>Login Page  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
-      <div id="sendmessage"> Your message has been sent successfully. Thank you. </div>
+      <div id="sendmessage"> Yourare log in successfully.</div>
 
      
         <div class="form-group">
-          <p>Email<span>*</span></p>
-          <span class="icon-case"><i class="glyphicon glyphicon-envelope"></i></span>
-          <input type="text" name="email" id="email" data-rule="required" data-msg="This is data msg.." onblur="xhttp()" />
+          <p>Old CMPF No.<span>*</span></p>
+          <span class="icon-case"><i class="glyphicon glyphicon-hand-right"></i></span>
+          <input type="text" name="legacy_number" id="legacy_number"/>
           
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
-          <p>Mobile<span>*</span></p>
-          <span class="icon-case"><i class="glyphicon glyphicon-earphone"></i></span>
-          <input type="number" name="mobile" id="mobile" data-rule="required" data-msg="This is data msg.." />
+          <p>New CMPF NO./UID<span>*</span></p>
+          <span class="icon-case"><i class="glyphicon glyphicon-hand-right"></i></span>
+          <input type="text" name="uid" id="uid"/>
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
           <p>Password<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-tags"></i></span>
-          <input type="password" name="pwd" id="pwd" data-rule="text" data-msg="This is data msg.." />
+          <input type="password" name="password" id="password" required/>
           <div class="validation"></div>
         </div>
 
-        <div class="form-group">
-          <p>Captcha<span>*</span></p>
-          <span class="icon-case"><i class="glyphicon glyphicon-pencil"></i></span>
-          <input type="text" name="captcha" id="captcha" data-rule="required" data-msg="This is data msg.." />
-          <div class="validation"></div>
-        </div>
-
-        
+     
     
     </div>
-    <button type = "button" class="bouton-contact">Sign up</button>
+    <button type = "submit" class="bouton-contact">Sign in</button>
 
   </form>
 </div>
@@ -125,7 +118,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>   
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/ajax.js"></script>
 
   </body>
 

@@ -75,6 +75,7 @@ readXmlData.prototype.normalizeData = function (data,defer,options){
     dbJson['TEL_NUM']         = eachRecord['TELNUM'][0] || null;
     dbJson['ADDHAR']          = eachRecord['ADDHAR'][0] || null;
     dbJson['PAN']             = eachRecord['PAN'][0] || null;
+    dbJson['REGUNIT']         = eachRecord['RUNIT'][0] || null;
     self.dataArray.push(dbJson);  
   });
   

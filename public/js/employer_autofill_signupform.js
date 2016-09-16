@@ -3,16 +3,17 @@ $("#uid").focusout(function (){
     $.ajax
     ({
         type  : 'GET',
-        url   : "http://localhost:8000/autoFill/?uid="+uid,
+        url   : "http://localhost:8000/autoFill/?uid="+uid+'&type='+3,
         error : function (res){
             alert(res.responseJSON.message);
         },
         success : function (res){
-            document.getElementById('legacy_number').value = res.result.BPEXT;
-            document.getElementById('name').value = res.result.FULL_NAME;
-            document.getElementById('address').value = "address to come";
+            document.getElementById('legacy_number').value      = res.result.BPEXT;
+            document.getElementById('name').value               = res.result.FULL_NAME;
+            document.getElementById('address').value            = "address to come";
             document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
-            document.getElementById('pan').value = res.result.PAN;
+
+            // add a check on submit that provided pan and fetched pan are matched
         },
     });
 });
@@ -22,7 +23,7 @@ $("#legacy_number").focusout(function (){
     $.ajax
     ({
         type  : 'GET',
-        url   : "http://localhost:8000/autoFill/?legacy_number="+legacy_number,
+        url   : "http://localhost:8000/autoFill/?legacy_number="+legacy_number+'&type='+3,
         error : function (res){
             alert(res.responseJSON.message);
         },
@@ -31,7 +32,6 @@ $("#legacy_number").focusout(function (){
             document.getElementById('name').value = res.result.FULL_NAME;
             document.getElementById('address').value = "address to come";
             document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
-            document.getElementById('pan').value = res.result.PAN;
         },
     });
 });

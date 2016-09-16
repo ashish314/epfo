@@ -70,7 +70,7 @@
   <!-- </div> -->
   
     
-  <form>
+  <form action="http://localhost:8000/signupMember" method="post">
     <h1>Member Sign up  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -80,7 +80,7 @@
         <div class="form-group">
           <p>Old CMPF No.<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-hand-right"></i></span>
-          <input type="text" name="legacy_number" id="legacy_number" data-rule="required" data-msg="This is data msg.."/>
+          <input type="text" name="legacy_number" id="legacy_number" required/>
           
           <div class="validation"></div>
         </div>
@@ -88,51 +88,71 @@
         <div class="form-group">
           <p>New CMPF NO./UID<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-hand-right"></i></span>
-          <input type="text" name="uid" id="uid" data-rule="required" data-msg="This is data msg.." />
+          <input type="text" name="uid" id="uid" required/>
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
           <p>Name<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-tags"></i></span>
-          <input type="text" name="name" id="name" data-rule="text" data-msg="This is data msg.." />
+          <input type="text" name="name" id="name" required/>
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
           <p>Employer Name<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-briefcase"></i></span>
-          <input type="text" name="employer_name" id="employer_name" data-rule="required" data-msg="This is data msg.." />
+          <input type="text" name="employer_name" id="employer_name" required/>
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
           <p>PAN<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-rub"></i></span>
-          <input type="text" name="pan" id="pan" data-rule="required" data-msg="This is data msg.." />
+          <input type="text" name="pan" id="pan" required/>
           <div class="validation"></div>
         </div>
 
         <div class="form-group">
           <p>Aadhar No.<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-barcode"></i></span>
-          <input type="text" name="addhar" id="addhar" data-rule="required" data-msg="This is data msg.." />
+          <input type="text" name="addhar" id="addhar"/>
           <div class="validation"></div>
         </div>
          <div class="form-group">
           <p>Address<span>*</span></p>
           <span class="icon-case"><i class="glyphicon glyphicon-home"></i></span>
-          <input type="text" name="address" id="address" data-rule="required" data-msg="This is data msg.." />
+          <input type="text" name="address" id="address"/>
+          <div class="validation"></div>
+        </div>
+
+        <div class="form-group">
+          <p>Email<span>*</span></p>
+          <span class="icon-case"><i class="glyphicon glyphicon-envelope"></i></span>
+          <input type="text" name="email" id="email" required/>
+          
+          <div class="validation"></div>
+        </div>
+
+        <div class="form-group">
+          <p>Mobile<span>*</span></p>
+          <span class="icon-case"><i class="glyphicon glyphicon-earphone"></i></span>
+          <input type="number" name="mobile" id="mobile" required/>
+          <div class="validation"></div>
+        </div>
+
+        <div class="form-group">
+          <p>Password<span>*</span></p>
+          <span class="icon-case"><i class="glyphicon glyphicon-tags"></i></span>
+          <input type="password" name="password" id="password" required/>
           <div class="validation"></div>
         </div>
     
     </div>
-    <button type = "button" class="bouton-contact">Next</button>
+    <button type = "submit" class="bouton-contact" id="submit">Submit</button>
 
   </form>
 </div>
-
-
   <div class="navbar navbar-default_footer navbar-fixed-bottom">
     <div class="container">
       <p class="navbar-text pull-left">© 2016 - CMPFO

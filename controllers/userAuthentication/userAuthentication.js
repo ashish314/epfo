@@ -17,6 +17,7 @@ var _             = require('lodash'),
     redisClient   = require(__dirname + '/../redis.js')(),
     RedisStore    = require('connect-redis')(session),
     mongoObj      = require(__dirname + '/../mongo.js')();
+    sha1          = require('sha1');
 
 APP.use(session({
     store             : new RedisStore({
@@ -32,24 +33,33 @@ APP.use(passport.initialize());
 APP.use(passport.session());
 
 passport.use(new LocalStrategy({
-  usernameField : 'uid',
-  passwordField : 'password' 
-},function (username,password,done){
-  // check for username and passowrd match.
+  usernameField : 'loginField',
+  passwordField : 'password',
+  passReqToCallback : true 
+},function (req,loginField,password,done){
+    // check for username and passowrd match.
+    var obj = {};
+    if(req.body.uid){
+      obj['PARTNER'] = req.body.uid;
+      obj['TYPE']    = String(req.body.type);
+    }
+    else if(req.body.legacy_number){
+      obj['BPEXT'] = req.body.legacy_number;
+      obj['TYPE']  = String(req.body.type); 
+    }
     mongoObj.init()
     .then(function (){
-      mongoObj.masterDataModel.findOne({username : username},function (err,result){
+      mongoObj.masterDataModel.findOne(obj,function (err,result){
         if(err){
           return done("Internal server error");
         }
         else if(_.isEmpty(result)){
-          return done(null,false,{message:"no user found"});
+          return done("no user found",false);
         }
         else {
-          // decrpt password if required.
-          var decrptPassword = password;
-          if(decrptPassword !== password){
-            return done(null,false,{message:"password do not match"});
+          var pass = sha1(password);
+          if(pass !== password){
+            return done("password do not match",false);
           }
           else{
             return done(null,result);
@@ -61,11 +71,13 @@ passport.use(new LocalStrategy({
 
 
 passport.serializeUser(function (user,done){
-  return done(null,user._id);
+  // id should be encrypted
+  return done(null,user.PARTNER);
 });
 
-passport.deserializeUser(function (userId,done){
-  mongoObj.masterDataModel.findOne({_id : userId},function (err,user){
+passport.deserializeUser(function (uid,done){
+  // if id is encrypted in serailize it must be decrypted here.
+  mongoObj.masterDataModel.findOne({PARTNER : uid},function (err,user){
     if(err)
       return done(err);
     else{      
