@@ -5,13 +5,13 @@ var fs      = require('fs'),
     config  = require(__dirname + '/../../config.js');
 
 function readXmlData(){
-  this.filePath = config.masterDataDownloadPath;
-  this.parser   = null;
-  this.initialized = false;
-  this.dataArray = [];
+  this.filePath     = config.masterDataDownloadPath;
+  this.parser       = null;
+  this.initialized  = false;
+  this.dataArray    = [];
   this.totalRecords = 0;
-  this.recordsRead = 0;
-  this.dataErrors = [];
+  this.recordsRead  = 0;
+  this.dataErrors   = [];
 };
 
 readXmlData.requiredKeys = {
@@ -58,7 +58,7 @@ readXmlData.prototype.normalizeData = function (data,defer,options){
   data.forEach(function (eachRecord) {
     var dbJson = {};
     dbJson['PARTNER']         = eachRecord['BP'][0] || null;
-    dbJson['TYPE']            = eachRecord['TYPE'][0] || null;
+    dbJson['BPKIND']          = eachRecord['BPKIND'][0] || null;
     dbJson['BPEXT']           = eachRecord['BPEXT'][0] || null;
     dbJson['FULL_NAME']       = eachRecord['FULLNAME'][0] || null;
     dbJson['ZZTITLE1']        = eachRecord['CTITLE'][0] || null;

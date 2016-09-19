@@ -1,10 +1,11 @@
+
 var mongoose = require('mongoose');
 
 function getSchema() {
     var schema = new mongoose.Schema({
 
         PARTNER         : { type : String }, // uid
-        TYPE            : { type : String }, // member/employer type (1 for member 3 for employer)
+        BPKIND          : { type : String }, // member/employer (0001 for member 0003 for employer)
         BPEXT           : { type : String }, // legacy/cmpfo (old)
         FULL_NAME       : { type : String }, // full name
         ZZTITLE1        : { type : String }, // designated person.
@@ -26,7 +27,7 @@ function getSchema() {
         PAN             : { type : String }, // pan number
         REGUNIT         : { type : String }, // employer id only for members.
 
-        password        : { type: String },
+        password        : { type : String },
     });
     return schema;
 };

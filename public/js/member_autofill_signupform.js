@@ -3,7 +3,7 @@ $("#uid").focusout(function (){
     $.ajax
     ({
         type  : 'GET',
-        url   : "http://localhost:8000/autoFill/?uid="+uid+'&type=1',
+        url   : "http://localhost:8000/autoFill/?uid="+uid+'&bpkind=0001',
         error : function (res){
             alert(res.responseJSON.message);
         },
@@ -23,7 +23,7 @@ $("#legacy_number").focusout(function (){
     $.ajax
     ({
         type  : 'GET',
-        url   : "http://localhost:8000/autoFill/?legacy_number="+legacy_number+'&type=1',
+        url   : "http://localhost:8000/autoFill/?legacy_number="+legacy_number+'&bpkind=0001',
         error : function (res){
             alert(res.responseJSON.message);
         },

@@ -33,6 +33,7 @@ apiRoutes.prototype.init = function (){
       self.router.post('/signupMember'  , self.signUpMenber.bind(self));
       self.router.post('/signinEmployer', self.signInEmployer.bind(self));
       self.router.post('/signinMember'  , self.signInMember.bind(self));
+      self.router.post('/uploadFile'    , self.uploadFile.bind(self));
 
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
@@ -53,16 +54,16 @@ apiRoutes.prototype.init = function (){
 };
 
 
-function query_on_uid_or_legacy(uid,legacy_number,type,cb){
+function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
   var self      = this;
   if(uid){
-    self.mongoObj.masterDataModel.findOne({PARTNER : uid,TYPE:type})
+    self.mongoObj.masterDataModel.findOne({PARTNER : uid,BPKIND:bpkind})
     .lean()
     .exec(function (err,user){
-      if(err || !user ||_.isEmpty(user)){
-        return cb(err,user);
+      if(err || !user){
+        return cb(err,null);
       }
-      else if (user && type === '1'){
+      else if (user && bpkind === '0001'){
         self.mongoObj.masterDataModel.findOne({PARTNER : user.REGUNIT})
         .lean()
         .exec(function (err,employer){
@@ -83,13 +84,13 @@ function query_on_uid_or_legacy(uid,legacy_number,type,cb){
   }
 
   else if(legacy_number){
-    self.mongoObj.masterDataModel.findOne({BPEXT : legacy_number,TYPE:type})
+    self.mongoObj.masterDataModel.findOne({BPEXT : legacy_number,BPKIND:bpkind})
     .lean()
     .exec(function (err,user){
-      if(err || _.isEmpty(user)){
-        return cb(err,user);
+      if(err || !user){
+        return cb(err,null);
       }
-      else if(user && type === '1'){
+      else if(user && bpkind === '0001'){
         self.mongoObj.masterDataModel.findOne({PARTNER : user.REGUNIT})
         .lean()
         .exec(function (err,employer){
@@ -106,29 +107,41 @@ function query_on_uid_or_legacy(uid,legacy_number,type,cb){
       else{
         return cb(err,user);
       }
-      
     });
   }
 };
 
-function getUid(uid,legacy_number,type,cb){
-  if(uid){
-    return cb(null,uid);
-  }
-  else if(!uid && !legacy_number){
-    return cb(null,false);
-  }
-  else{
-    this.mongoObj.masterDataModel.findOne({BPEXT : legacy_number,TYPE : type})
-    .lean()
-    .exec(function (err,user){
-      if(err){
-        return (err,false);
-      }
+// function getUid(uid,legacy_number,type,cb){
+//   if(uid){
+//     return cb(null,uid);
+//   }
+//   else if(!uid && !legacy_number){
+//     return cb(null,false);
+//   }
+//   else{
+//     this.mongoObj.masterDataModel.findOne({BPEXT : legacy_number,TYPE : type})
+//     .lean()
+//     .exec(function (err,user){
+//       if(err){
+//         return (err,false);
+//       }
       
-    });
+//     });
+//   }
+// }
+
+apiRoutes.prototype.uploadFile = function (req,res,next){
+  // if not logged in return 400.
+  if(!req.user || req.user.BPKIND != '0003'){
+    return this.errorResponse(res,400,'user not authorized');
   }
-}
+  else if(!req.files){
+    return this.errorResponse(res,400,'No file selected');
+  }
+  // add a check for allowed file types as well.
+
+
+};
 
 apiRoutes.prototype.signInEmployer = function (req,res,next){
   var self = this;
@@ -142,7 +155,7 @@ apiRoutes.prototype.signInEmployer = function (req,res,next){
     return this.errorResponse(res,400,"already Logged in");
   }
   else{
-    req.body.type = 3;
+    req.body.bpkind = '0003';   // we can have frontend pass this value as well.
     req.body.loginField = 'blank';
     authenticate(req,res,next,function (err,user){
       if(err){
@@ -167,7 +180,7 @@ apiRoutes.prototype.signInMember = function (req,res,next){
     return this.errorResponse(res,400,"already Logged in");
   }
   else{
-    req.body.type = 1;
+    req.body.bpkind = '0001';   // type of user.
     req.body.loginField = 'blank';
     authenticate(req,res,next,function (err,user){
       if(err){
@@ -202,16 +215,16 @@ apiRoutes.prototype.autoFillForm = function (req,res,next){
     return this.errorResponse(res,404,"uid or legacy number is required");
   }
 
-  if(_.isEmpty(req.query.type)){
+  if(_.isEmpty(req.query.bpkind)){
     return this.errorResponse(res,400,"User type is not specified");
   }
 
   var uid           = req.query.uid,
       legacy_number = req.query.legacy_number,
-      type          = req.query.type,
+      bpkind        = req.query.bpkind,
       self          = this;
 
-  query_on_uid_or_legacy.bind(this)(uid,legacy_number,type,function (err,user){
+  query_on_uid_or_legacy.bind(this)(uid,legacy_number,bpkind,function (err,user){
     if(err){
       return self.errorResponse(res,500,'Internal server error');
     }
@@ -241,70 +254,9 @@ apiRoutes.prototype.signin_member = function (req,res,next){
 }
 
 apiRoutes.prototype.signUpEmployer = function (req,res,next){
-
-  if(_.isEmpty(req.body)){
-    return this.errorResponse(res,400,"Required fields are blank");
-  }
-  if(_.isEmpty(req.body.uid)){
-    return this.errorResponse(res,400,"Uid cannot be blank");
-  }
-  if(_.isEmpty(req.body.email)){
-    return this.errorResponse(res,400,"Email cannot be blank");
-  }
-  if(_.isEmpty(req.body.password)){
-    return this.errorResponse(res,400,"Password cannot be blank");
-  }
-  if(_.isEmpty(req.body.mobile)){
-    return this.errorResponse(res,400,"Mobile cannot be blank");
-  }
-  if(!this.mongoObj){
-    return this.errorResponse(res,500,'Internal server error');
-  }
-  var uid      = req.body.uid,
-      password = req.body.password,
-      email    = req.body.email,
-      mobile   = req.body.mobile,
-      self     = this;
-
-  // check for these details in database.
-  this.mongoObj.masterDataModel.findOne({PARTNER : uid,TYPE : 1},function (err,result){
-    if(err){
-      return self.errorResponse(res,500,'Internal server error');
-    }
-    else if(!_.isEmpty(result)){
-      return self.errorResponse(res,400,'Uid is already occupied');
-    }
-    else if(result && result.password){
-      return self.errorResponse(res,400,'User already signed up');
-    }
-    else{
-      // now update fields in db.
-      result.UPDATED_TEL_NUM = mobile;
-      result.UPDATED_EMAIL   = email;
-      result.password        = sha1(password);
-      result.save(function (err){
-        if(err){
-          return self.errorResponse(res , 500 ,'Internal server error');
-        }
-        else{
-          req.login(user,function (err){
-            if(err){
-              return self.errorResponse(res,500,'Server Error');
-            }
-            else{
-              return self.successResponse(res,200,"success",user);
-            }
-          });
-        }
-      }); 
-    }
-  });   
-};
-
-apiRoutes.prototype.signUpMenber = function (req,res,next){
   var self = this;
-  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];
-  req.body.type      = 1;
+  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan',];
+  req.body.bpkind    = '0003';
   var bodyParams     = req.body;
   if(!bodyParams){
       return self.errorResponse(res,400,"Invalid request");
@@ -316,7 +268,56 @@ apiRoutes.prototype.signUpMenber = function (req,res,next){
     }
   }); 
 
-  this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, TYPE : '1'})
+  this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0003'})
+  .exec(function (err,user){
+    if(err){
+      return self.errorResponse(res,500,"Internal server error");
+    }
+    else if(!user || _.isEmpty(user) ){
+      return self.errorResponse(res,404,"User not found");
+    }
+    // else if(user && user.password){
+    //   return self.errorResponse(res,400,"User already signed up");
+    // }
+    else{
+      user.UPDATED_TEL_NUM = req.body['mobile'] || null;
+      user.UPDATED_EMAIL   = req.body['email']  || null;
+      user.password        = sha1(req.body['password']);
+      user.save(function (err){
+        if(err){
+          return self.errorResponse(res,500,"Internal server error");
+        }
+        else{
+          req.login(user,function (err){
+            if(err){
+              return self.errorResponse(res,500,"Server error");
+            }
+            else{
+              return self.successResponse(res,200,"success",user);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+apiRoutes.prototype.signUpMenber = function (req,res,next){
+  var self = this;
+  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];
+  req.body.bpkind    = '0001';
+  var bodyParams     = req.body;
+  if(!bodyParams){
+      return self.errorResponse(res,400,"Invalid request");
+    }
+
+  requiredFields.forEach(function (eachField){
+    if(!bodyParams[eachField] || _.isEmpty(bodyParams[eachField])){
+      return self.errorResponse(res,400,bodyParams[eachField]+' is required');
+    }
+  }); 
+
+  this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0001'})
   .exec(function (err,user){
     if(err){
       return self.errorResponse(res,500,"Internal server error");

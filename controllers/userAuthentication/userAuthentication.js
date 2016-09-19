@@ -40,12 +40,12 @@ passport.use(new LocalStrategy({
     // check for username and passowrd match.
     var obj = {};
     if(req.body.uid){
-      obj['PARTNER'] = req.body.uid;
-      obj['TYPE']    = String(req.body.type);
+      obj['PARTNER']   = req.body.uid;
+      obj['BPKIND']    = String(req.body.bpkind);
     }
     else if(req.body.legacy_number){
-      obj['BPEXT'] = req.body.legacy_number;
-      obj['TYPE']  = String(req.body.type); 
+      obj['BPEXT']   = req.body.legacy_number;
+      obj['BPKIND']  = String(req.body.bpkind); 
     }
     mongoObj.init()
     .then(function (){
@@ -58,7 +58,7 @@ passport.use(new LocalStrategy({
         }
         else {
           var pass = sha1(password);
-          if(pass !== password){
+          if(pass !== result.password){
             return done("password do not match",false);
           }
           else{
@@ -72,7 +72,8 @@ passport.use(new LocalStrategy({
 
 passport.serializeUser(function (user,done){
   // id should be encrypted
-  return done(null,user.PARTNER);
+  console.log(user);
+  return done(null,{"PARTNER" : user.PARTNER,"BPKIND" : String(user.BPKIND)});
 });
 
 passport.deserializeUser(function (uid,done){
@@ -87,14 +88,11 @@ passport.deserializeUser(function (uid,done){
 });
 
 function trimUserObject(user){
-  var requiredFields = ['_id','username'];
-  var updatedUserObj = {};
-  requiredFields.forEach(function (key){
-    updatedUserObj[key] = user[key];
+  var trimFields = ['password'];
+  trimFields.forEach(function (key){
+      delete user[key];
   });
-
-  user = null;
-  return updatedUserObj;
+  return user;
 };
     
 var autheticate = function (req,res,next,cb){
