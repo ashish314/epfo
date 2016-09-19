@@ -70,7 +70,7 @@
   <!-- </div> -->
   
     
-  <form method="post" action="http://localhost:8000/signupEmployer"> 
+  <form method="post" action="http://localhost:8000/signupEmployer" id='signupEmployer'> 
     <h1>Employer Sign up  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -143,7 +143,7 @@
         </div>
     
     </div>
-    <button type = "submit" class="bouton-contact">Submit</button>
+    <button type = "submit" class="bouton-contact" id='submit'>Submit</button>
     
   </form>
 </div>
@@ -160,6 +160,33 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/employer_autofill_signupform.js"></script>
+
+
+    <script>
+      // submit button javascript for error checking.
+      $("#submit").click(function (e){
+        e.preventDefault();
+        var a = $("#signupEmployer_form").serialize();
+        // [{name : 'field name', value : 'value'}]
+        $.ajax({
+          type : 'POST',
+          url  : 'http://localhost:8000/signupEmployer',
+          data : a,
+          error : function (err){
+            alert(err);
+            console.log(err);
+          },
+          success : function (res){
+            // just redirect it to landing page.
+            // user data in res.result. 
+
+            // (http://localhost:8000/landingPage/2000630242)
+          } 
+        });
+      });
+
+
+    </script>
 
   </body>
 

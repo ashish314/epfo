@@ -17,6 +17,7 @@ var _             = require('lodash'),
     redisClient   = require(__dirname + '/../redis.js')(),
     RedisStore    = require('connect-redis')(session),
     mongoObj      = require(__dirname + '/../mongo.js')();
+    mongoose      = require('mongoose'),
     sha1          = require('sha1');
 
 APP.use(session({
@@ -72,13 +73,12 @@ passport.use(new LocalStrategy({
 
 passport.serializeUser(function (user,done){
   // id should be encrypted
-  console.log(user);
   return done(null,{"PARTNER" : user.PARTNER,"BPKIND" : String(user.BPKIND)});
 });
 
-passport.deserializeUser(function (uid,done){
+passport.deserializeUser(function (userInfo,done){
   // if id is encrypted in serailize it must be decrypted here.
-  mongoObj.masterDataModel.findOne({PARTNER : uid},function (err,user){
+  mongoObj.masterDataModel.findOne({"PARTNER" : userInfo.PARTNER},function (err,user){
     if(err)
       return done(err);
     else{      

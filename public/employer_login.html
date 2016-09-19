@@ -70,7 +70,7 @@
   <!-- </div> -->
   
     
-  <form method="post" action="http://localhost:8000/signinEmployer">
+  <form method="post" action="http://localhost:8000/signinEmployer" id='employer_login'>
     <h1>Login Page  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -102,7 +102,7 @@
      
     
     </div>
-    <button type = "submit" class="bouton-contact">Sign in</button>
+    <button type = "submit" class="bouton-contact" id='submit'>Sign in</button>
 
   </form>
 </div>
@@ -119,6 +119,32 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
+
+    <script>
+    // submit button javascript for error checking.
+    $("#submit").click(function (e){
+      e.preventDefault();
+      var a = $("#employer_login").serialize();
+      // [{name : 'field name', value : 'value'}]
+      $.ajax({
+        type : 'POST',
+        url  : 'http://localhost:8000/signinEmployer',
+        data : a,
+        error : function (err){
+          alert(err);
+          console.log(err);
+        },
+        success : function (res){
+          // just redirect it to landing page.
+          // user data in res.result. 
+
+          // (http://localhost:8000/landingPage/2000630242)
+        } 
+      });
+    });
+
+
+    </script>
 
   </body>
 

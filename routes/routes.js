@@ -7,11 +7,38 @@ var EXPRESS               = require('express'),
     REQUEST               = require('request'),
     deferred              = require('deferred'),
     authenticate          = require(__dirname + '/../controllers/userAuthentication/userAuthentication.js'),
+    multer                = require('multer'),
+    config                = require(__dirname + '/../config.js'),
+    ftp                   = require(__dirname + '/../controllers/ftpFetcher.js')(),
+    
     mongoObj              = require(__dirname + '/../controllers/mongo.js')();
 
+
+var multerOpts = {
+  storage : multer.diskStorage({
+    destination    : function (req, file, cb) {
+      var uploadPath = config.uploadFileDir;
+      cb(null, uploadPath)
+    },
+
+    filename   : function (req, file, cb) {
+      console.log("came in filename");
+      cb(null,file.originalname)
+    }
+  }),
+  fileFilter   : function (req, file, cb) {
+    console.log("came in fileFilter");
+    cb(null,true);   // pass false to this if file needs to be rejected.
+  }
+};
+
+var upload = multer(multerOpts);
+
+ 
+
 function apiRoutes (){
-  this.router   = null;
-  this.mongoObj = null;
+  this.router      = null;
+  this.mongoObj    = null;
   this.initialized = false;
 };
 
@@ -33,7 +60,7 @@ apiRoutes.prototype.init = function (){
       self.router.post('/signupMember'  , self.signUpMenber.bind(self));
       self.router.post('/signinEmployer', self.signInEmployer.bind(self));
       self.router.post('/signinMember'  , self.signInMember.bind(self));
-      self.router.post('/uploadFile'    , self.uploadFile.bind(self));
+      self.router.post('/uploadFile',upload.single('testFile'), self.uploadFile.bind(self));
 
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
@@ -132,15 +159,22 @@ function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
 
 apiRoutes.prototype.uploadFile = function (req,res,next){
   // if not logged in return 400.
-  if(!req.user || req.user.BPKIND != '0003'){
-    return this.errorResponse(res,400,'user not authorized');
-  }
-  else if(!req.files){
-    return this.errorResponse(res,400,'No file selected');
-  }
+  // if(!req.user || req.user.BPKIND != '0003'){
+  //   return this.errorResponse(res,400,'user not authorized');
+  // }
+  // else if(!req.files){
+  //   return this.errorResponse(res,400,'No file selected');
+  // }
   // add a check for allowed file types as well.
+  var self = this;
 
-
+  ftp.uploadFile(req.file.path, req.file.filename)
+  .then(function (){
+    self.successResponse(res,200,"success","file uploaded successfully");
+  },function (err){
+    console.log(err);
+    self.errorResponse(res,400,"failure","failure");
+  });
 };
 
 apiRoutes.prototype.signInEmployer = function (req,res,next){
@@ -304,6 +338,7 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
 
 apiRoutes.prototype.signUpMenber = function (req,res,next){
   var self = this;
+  console.log(req.body);
   var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];
   req.body.bpkind    = '0001';
   var bodyParams     = req.body;

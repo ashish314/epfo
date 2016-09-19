@@ -70,7 +70,7 @@
   <!-- </div> -->
   
     
-  <form action="http://localhost:8000/signupMember" method="post">
+  <form action="http://localhost:8000/signupMember" method="post" id='signupMember_form'>
     <h1>Member Sign up  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -164,6 +164,33 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/member_autofill_signupform.js"></script>
+
+    <script>
+    // submit button javascript for error checking.
+    $("#submit").click(function (e){
+      e.preventDefault();
+      var a = $("#signupMember_form").serialize();
+      // [{name : 'field name', value : 'value'}]
+      $.ajax({
+        type : 'POST',
+        url  : 'http://localhost:8000/signupMember',
+        data : a,
+        error : function (err){
+          alert(err);
+          console.log(err);
+        },
+        success : function (res){
+          // just redirect it to landing page.
+          // user data in res.result. 
+
+          // (http://localhost:8000/landingPage/2000630242)
+        } 
+      });
+    });
+
+
+    </script>
+
 
   </body>
 

@@ -46,6 +46,29 @@ ftpFetcher.prototype.initiateDownloadProcess = function() {
   return downloadDefer.promise;
 };
 
+ftpFetcher.prototype.uploadFile = function (filePath,fileName){
+  var self = this,
+      defer = new deferred();
+
+  
+  var tempClient = new ftpClient();
+
+  tempClient.on('ready',function (status){
+    console.log(filePath);
+    tempClient.put(filePath,fileName,function (err){
+      if(err)
+        return defer.reject(err);
+
+      tempClient.end();
+      return defer.resolve();
+    }); 
+  });
+
+  tempClient.connect(config.SAP_FTP_SERVER);
+  return defer.promise;
+
+};
+
 ftpFetcher.prototype.end = function (){
   ftpFetcherObj = null;
   this.client = null;

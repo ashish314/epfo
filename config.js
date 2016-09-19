@@ -21,6 +21,8 @@ var config = {
     database : 'test'
   },
   redis : "redis://localhost:6379",
+
+  uploadFileDir : '/Users/ashish/epfo/public/uploads/'
 };
 
 module.exports = exports = config;
