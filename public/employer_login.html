@@ -131,14 +131,13 @@
         url  : 'http://localhost:8000/signinEmployer',
         data : a,
         error : function (err){
-          alert(err);
+          alert(err.responseJSON.message);
           console.log(err);
         },
         success : function (res){
           // just redirect it to landing page.
           // user data in res.result. 
-
-          // (http://localhost:8000/landingPage/2000630242)
+          window.location.href = "http://localhost:8000/landingPage/"+res.result.PARTNER;
         } 
       });
     });

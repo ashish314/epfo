@@ -57,10 +57,12 @@ apiRoutes.prototype.init = function (){
       // main logic routes.
       self.router.get('/'               , self.homepage.bind(self));
       self.router.post('/signupEmployer', self.signUpEmployer.bind(self));
-      self.router.post('/signupMember'  , self.signUpMenber.bind(self));
+      self.router.post('/signupMember'  , self.signUpMember.bind(self));
       self.router.post('/signinEmployer', self.signInEmployer.bind(self));
       self.router.post('/signinMember'  , self.signInMember.bind(self));
-      self.router.post('/uploadFile',upload.single('testFile'), self.uploadFile.bind(self));
+      self.router.post('/uploadFile'    , upload.single('testFile'), self.uploadFile.bind(self));
+      self.router.get('/landingPage/:uid'    , self.landingPage.bind(self));
+      self.router.get('/logout'         , self.logout.bind(self));
 
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
@@ -138,24 +140,42 @@ function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
   }
 };
 
-// function getUid(uid,legacy_number,type,cb){
-//   if(uid){
-//     return cb(null,uid);
-//   }
-//   else if(!uid && !legacy_number){
-//     return cb(null,false);
-//   }
-//   else{
-//     this.mongoObj.masterDataModel.findOne({BPEXT : legacy_number,TYPE : type})
-//     .lean()
-//     .exec(function (err,user){
-//       if(err){
-//         return (err,false);
-//       }
-      
-//     });
-//   }
-// }
+
+apiRoutes.prototype.logout = function (req,res,next){
+  if(!req.user){
+    return this.errorResponse(res,400,"user not logged in");
+  }
+  else {
+    req.logout();
+    return this.successResponse(res,200,'success',"user logged out");
+  }
+};
+
+apiRoutes.prototype.landingPage = function (req,res,next){
+  if(!req.user || !req.params.uid){
+    return res.redirect('/');
+  }
+  else{
+    // user is authenticated
+    var self = this;
+    this.mongoObj.masterDataModel.findOne({PARTNER : req.params.uid})
+    .lean()
+    .exec(function (err,user){
+      if(err){
+        return self.errorResponse(res,500,'Internal Server error');
+      }
+      else if (!user){
+        return self.errorResponse(res,404,'User not found');
+      }
+      else{
+        var result = {};
+        result.user = user;
+
+        return res.render(__dirname + '/../public/landing_page.ejs',result);
+      }
+    });
+  }
+};
 
 apiRoutes.prototype.uploadFile = function (req,res,next){
   // if not logged in return 400.
@@ -336,7 +356,7 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
   });
 };
 
-apiRoutes.prototype.signUpMenber = function (req,res,next){
+apiRoutes.prototype.signUpMember = function (req,res,next){
   var self = this;
   console.log(req.body);
   var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];

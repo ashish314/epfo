@@ -173,7 +173,7 @@
           url  : 'http://localhost:8000/signupEmployer',
           data : a,
           error : function (err){
-            alert(err);
+            alert(err.responseJSON.message);
             console.log(err);
           },
           success : function (res){
@@ -181,6 +181,7 @@
             // user data in res.result. 
 
             // (http://localhost:8000/landingPage/2000630242)
+            window.location.href = "http://localhost:8000/landingPage/"+res.result.PARTNER;
           } 
         });
       });

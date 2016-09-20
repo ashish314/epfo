@@ -8,10 +8,10 @@
     <title>CMPFO e-Services</title>
 <link rel="shortcut icon" href="images/favicon.png">
     <!-- Bootstrap -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-       <link href="css/custom.css" rel="stylesheet">
+    <link href="/../css/bootstrap.css" rel="stylesheet">
+       <link href="/../css/custom.css" rel="stylesheet">
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
-        <link rel="stylesheet" type="text/css" href="css/style4.css" />
+        <link rel="stylesheet" type="text/css" href="/../css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -97,13 +97,13 @@
 
     </div>
     <div class="col-sm-6">
-   <h1> Welcome <%= FULL_NAME %>;<h1>
+   <h1> Welcome <%= user.FULL_NAME %>;<h1>
 <!-- here all ajax data will go  -->
 
 
 
     </div>	
-    <div class="col-sm-3"><button type="button" class="btn btn-info">Log Out</button>
+    <div class="col-sm-3"><button type="button" class="btn btn-info" id="logout_btn">Log Out</button>
     </div>
   </div>
 </div>
@@ -112,8 +112,26 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>   
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-   <script src="js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="js/employer_autofill_signupform.js"></script>
+   <script src="/../js/bootstrap.min.js"></script>
+
+   <script>
+   $('#logout_btn').click(function (e){
+    e.preventDefault();
+    $.ajax({
+      url : 'http://localhost:8000/logout',
+      type : 'GET',
+      error : function (err){
+        window.location.href = "http://localhost:8000/"
+      },
+      success : function (){
+        alert("logged out successfully");
+        setTimeout(function (){
+          window.location.href = "http://localhost:8000/"
+        },0);
+      }
+    });
+   })
+   </script>
 
   </body>
   
