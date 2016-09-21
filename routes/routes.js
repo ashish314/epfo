@@ -186,15 +186,20 @@ apiRoutes.prototype.uploadFile = function (req,res,next){
   //   return this.errorResponse(res,400,'No file selected');
   // }
   // add a check for allowed file types as well.
-  var self = this;
+  console.log(req.body);
+  // var self = this;
 
-  ftp.uploadFile(req.file.path, req.file.filename)
-  .then(function (){
-    self.successResponse(res,200,"success","file uploaded successfully");
-  },function (err){
-    console.log(err);
-    self.errorResponse(res,400,"failure","failure");
-  });
+  // if(!req.file){
+  //   return this.errorResponse(res,400,"No file selected");
+  // }
+
+  // ftp.uploadFile(req.file.path, req.file.filename)
+  // .then(function (){
+  //   self.successResponse(res,200,"success","file uploaded successfully");
+  // },function (err){
+  //   console.log(err);
+  //   self.errorResponse(res,400,"failure","failure");
+  // });
 };
 
 apiRoutes.prototype.signInEmployer = function (req,res,next){

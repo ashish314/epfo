@@ -7,11 +7,12 @@ var config = {
     host     : '59.90.31.81',
     port     : 21,
     user     : 'administrator',
-    password : 'Ratnesh@123'
+    password : 'Ratnesh@123',
+    keepalive: 1000,
   },
 
-  masterDataDownloadPath  : '/Users/ashish/epfo/public/masterDataFiles/file_name.xml',
-  masterDataFilePathOnSAP : 'BUT000_20160914155621.xml',
+  masterDataDownloadPath  : '/Users/ashish/epfo/public/masterDataFiles/',
+  masterDataFilePathOnSAP : '/masterDataFiles/',
   // masterDataFilePathOnSAP : 'file_name.xml',
 
 

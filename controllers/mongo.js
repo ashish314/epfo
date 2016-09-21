@@ -1,18 +1,21 @@
 // mongo class all mongo things needs to be done here.
 // basically this will expose a obj.
 
-var mongoose         = require('mongoose'),
-    config           = require(__dirname + '/../config.js'),
-    masterDataSchema = require(__dirname + '/../db/masterData.js')(),
-    deferred         = require('deferred');
+var mongoose            = require('mongoose'),
+    config              = require(__dirname + '/../config.js'),
+    masterDataSchema    = require(__dirname + '/../db/masterData.js')(),
+    uploadedFileSchema  = require(__dirname + '/../db/uploadFile.js')(),
+    counter             = require(__dirname + '/../db/counter.js')(),
+    deferred            = require('deferred');
 
 function mongo() {
-  this._dbConfig       = config.mongo;
-  this.conn            = null;
-  this.connected       = false;
-  this.masterDataModel = null;
-
-}
+  this._dbConfig          = config.mongo;
+  this.conn               = null;
+  this.connected          = false;
+  this.masterDataModel    = null;
+  this.uploadedFileModel  = null;
+  this.counterModel       = null;
+};
 
 mongo.prototype.init = function() {
   // create connection to mongo.
@@ -52,8 +55,10 @@ mongo.prototype.getModels = function (){
   if(!this.conn || !this.connected)
     throw new Error("Not connected to mongo");
 
-  this.masterDataModel = this.conn.model('masterData',masterDataSchema);
-}
+  this.masterDataModel   = this.conn.model('masterData',masterDataSchema);
+  this.uploadedFileModel = this.conn.model("uploadedFile",uploadedFileSchema);
+  this.counterModel      = this.conn.model("counter",counter);
+};
 
 var mongoObj = null;
 
