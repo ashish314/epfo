@@ -166,7 +166,7 @@
       // submit button javascript for error checking.
       $("#submit").click(function (e){
         e.preventDefault();
-        var a = $("#signupEmployer_form").serialize();
+        var a = $("#signupEmployer").serialize();
         // [{name : 'field name', value : 'value'}]
         $.ajax({
           type : 'POST',

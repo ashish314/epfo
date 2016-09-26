@@ -22,12 +22,12 @@ var multerOpts = {
     },
 
     filename   : function (req, file, cb) {
-      console.log("came in filename");
+      // console.log("came in filename");
       cb(null,file.originalname)
     }
   }),
   fileFilter   : function (req, file, cb) {
-    console.log("came in fileFilter");
+    // console.log("came in fileFilter");
     cb(null,true);   // pass false to this if file needs to be rejected.
   }
 };
@@ -177,29 +177,74 @@ apiRoutes.prototype.landingPage = function (req,res,next){
   }
 };
 
+function createCounter(cb){
+  var self = this;
+
+  this.mongoObj.counterModel.findOne({},function (err,counter){
+    if(err)
+      return cb(err,null);
+    else if(!counter){
+      self.mongoObj.counterModel.create({},function (err,counter){
+        if(err)
+          return cb(err,null);
+
+        else{
+          return cb(null,counter);
+        }
+      });
+    }
+    else{
+      return cb(null,counter);
+    } 
+  });
+};  
+
 apiRoutes.prototype.uploadFile = function (req,res,next){
   // if not logged in return 400.
-  // if(!req.user || req.user.BPKIND != '0003'){
-  //   return this.errorResponse(res,400,'user not authorized');
-  // }
+  if(!req.user || req.user.BPKIND != '0003'){
+    return this.errorResponse(res,400,'user not authorized');
+  }
   // else if(!req.files){
   //   return this.errorResponse(res,400,'No file selected');
   // }
   // add a check for allowed file types as well.
-  console.log(req.body);
-  // var self = this;
+  var self = this;
 
-  // if(!req.file){
-  //   return this.errorResponse(res,400,"No file selected");
-  // }
+  if(!req.file){
+    return this.errorResponse(res,400,"No file selected");
+  }
 
-  // ftp.uploadFile(req.file.path, req.file.filename)
-  // .then(function (){
-  //   self.successResponse(res,200,"success","file uploaded successfully");
-  // },function (err){
-  //   console.log(err);
-  //   self.errorResponse(res,400,"failure","failure");
-  // });
+  // increment counter and create a entry in uploadFile
+  createCounter.bind(this)(function (err,counter){
+    var uploadFile = new self.mongoObj.uploadedFileModel();
+    uploadFile.user             = req.user._id;
+    uploadFile.uploaded_date    = Date.now();
+    uploadFile.year             = 2008;
+    uploadFile.month            = 04;
+    uploadFile.status           = 'uploaded';
+    uploadFile.sap_status       = 'pending';
+    uploadFile.file_number      = counter.file_number;
+    uploadFile.file_name        = String(counter.file_number)+'_'+String(req.user.PARTNER);
+
+    uploadFile.save(function (err){
+      if(err)
+        self.errorResponse(res,500,"Internal server error");
+
+      counter.file_number = counter.file_number + 1;
+      counter.save(function (err){
+        if(err)
+          self.errorResponse(res,500,"Internal server error");
+
+        ftp.uploadFile(req.file.path, '/vv_forms/'+uploadFile.file_name)
+        .then(function (){
+          self.successResponse(res,200,"success","File upload successfully");
+        },function (err){
+          console.log(err);
+          self.errorResponse(res,400,"failed to upload");
+        });
+      })
+    });
+  });
 };
 
 apiRoutes.prototype.signInEmployer = function (req,res,next){
@@ -320,9 +365,9 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
   if(!bodyParams){
       return self.errorResponse(res,400,"Invalid request");
     }
-
   requiredFields.forEach(function (eachField){
     if(!bodyParams[eachField] || _.isEmpty(bodyParams[eachField])){
+      console.log(eachField);
       return self.errorResponse(res,400,bodyParams[eachField]+' is required');
     }
   }); 
@@ -363,7 +408,6 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
 
 apiRoutes.prototype.signUpMember = function (req,res,next){
   var self = this;
-  console.log(req.body);
   var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];
   req.body.bpkind    = '0001';
   var bodyParams     = req.body;

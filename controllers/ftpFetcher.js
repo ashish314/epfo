@@ -6,7 +6,7 @@ var config    = require(__dirname + '/../config.js'),
 
 function ftpFetcher (){
   this.client     = null;
-  this.filesArray = null;
+  this.filesArray = [];
 };
 
 ftpFetcher.prototype.init = function (){
@@ -77,7 +77,7 @@ ftpFetcher.prototype.scheduler = function (defer){
       self.scheduler(defer);
     },function (err){
       console.log(err);
-      self.scheduler();
+      self.scheduler(defer);
     });
     return defer.promise;
   }
@@ -101,6 +101,7 @@ ftpFetcher.prototype.process = function (){
         fs.closeSync(fs.openSync(config.masterDataDownloadPath+file.name, 'w'));
 
         stream.once('close', function (){
+          console.log("file downloaded");
           return processDefer.resolve();
         });
 
@@ -112,7 +113,7 @@ ftpFetcher.prototype.process = function (){
 
 };
 
-ftpFetcher.prototype.uploadFile = function (filePath,fileName){
+ftpFetcher.prototype.uploadFile = function (filePath,destinationPath){
   var self = this,
       defer = new deferred();
 
@@ -120,7 +121,7 @@ ftpFetcher.prototype.uploadFile = function (filePath,fileName){
   var tempClient = new ftpClient();
 
   tempClient.on('ready',function (status){
-    tempClient.put(filePath,fileName,function (err){
+    tempClient.put(filePath,destinationPath,function (err){
       if(err)
         return defer.reject(err);
 
@@ -156,6 +157,6 @@ module.exports = exports = downloadMasterData;
 
 
   // Test code
-  var abc = downloadMasterData();
-  abc.initiateDownloadProcess();
+  // var abc = downloadMasterData();
+  // abc.initiateDownloadProcess();
 

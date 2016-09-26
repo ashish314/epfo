@@ -70,8 +70,8 @@
     <h3 class="panel-title">Upload</h3>
   </div>
   
-    <a href="#" class="list-group-item">Upload VV Form</a>
-       <a href="#" class="list-group-item">Web Service with XML Response</a>
+    <a href="#" class="list-group-item" data-toggle="modal" data-target="#myModal">Upload VV Form</a>
+    <a href="#" class="list-group-item">Web Service with XML Response</a>
 </div>
 <div class="panel panel-info">
   <div class="panel-heading">
@@ -97,9 +97,36 @@
 
     </div>
     <div class="col-sm-6">
-   <h1> Welcome <%= user.FULL_NAME %>;<h1>
+   <h1> Welcome <%= user.FULL_NAME %><h1>
 <!-- here all ajax data will go  -->
-
+    <div class="container">
+      <!-- Trigger the modal with a button -->
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <form id="form" method='post' enctype="multipart/form-data" role="form">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Upload vv form</h4>
+              </div>
+              <div class="modal-body">
+                <!-- <div id="messages"></div> -->
+                <input type="file" name="file" id="file">
+                <input type="submit" id="form_submit">upload
+              </div>
+              <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+              </div>
+            </form>
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
 
 
     </div>	

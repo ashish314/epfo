@@ -33,7 +33,6 @@ storeXmlData.prototype.storeRecord = function (record,options){
       defer.reject(err);
     }
     else{
-      console.log(result);
       self.insertedRecords++;
       defer.resolve(result);
     }

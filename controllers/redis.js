@@ -5,7 +5,7 @@ var redisClient = null,
     connected   = false;
 
 var connectRedis = function connectRedis(){
-  if(connected){
+  if(connected || redisClient){
     return redisClient;
   }
   else{

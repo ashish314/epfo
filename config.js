@@ -4,7 +4,7 @@ var config = {
   },
 
   SAP_FTP_SERVER : {
-    host     : '59.90.31.81',
+    host     : '59.90.215.47',
     port     : 21,
     user     : 'administrator',
     password : 'Ratnesh@123',
@@ -13,7 +13,6 @@ var config = {
 
   masterDataDownloadPath  : '/Users/ashish/epfo/public/masterDataFiles/',
   masterDataFilePathOnSAP : '/masterDataFiles/',
-  // masterDataFilePathOnSAP : 'file_name.xml',
 
 
   mongo : {
@@ -23,7 +22,10 @@ var config = {
   },
   redis : "redis://localhost:6379",
 
-  uploadFileDir : '/Users/ashish/epfo/public/uploads/'
+  sap_vv_response_path : './vv_form_response/',
+  uploadFileDir : '/Users/ashish/epfo/public/uploads/',
+  vv_form_response : '/Users/ashish/epfo/public/vv_form_response/',
+
 };
 
 module.exports = exports = config;
