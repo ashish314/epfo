@@ -20,6 +20,7 @@ var config = {
     port : '27017',
     database : 'test'
   },
+  
   redis : "redis://localhost:6379",
 
   sap_vv_response_path : './vv_form_response/',

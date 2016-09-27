@@ -10,7 +10,6 @@ var EXPRESS               = require('express'),
     multer                = require('multer'),
     config                = require(__dirname + '/../config.js'),
     ftp                   = require(__dirname + '/../controllers/ftpFetcher.js')(),
-    
     mongoObj              = require(__dirname + '/../controllers/mongo.js')();
 
 
@@ -28,7 +27,11 @@ var multerOpts = {
   }),
   fileFilter   : function (req, file, cb) {
     // console.log("came in fileFilter");
-    cb(null,true);   // pass false to this if file needs to be rejected.
+    var fileExtension = file.originalname.slice(-4).toLowerCase();
+    if(fileExtension != '.csv')
+      cb("only csv files are allowed",false);   // pass false to this if file needs to be rejected.
+    else
+      cb(null,true);
   }
 };
 
@@ -63,7 +66,8 @@ apiRoutes.prototype.init = function (){
       self.router.post('/uploadFile'    , upload.single('testFile'), self.uploadFile.bind(self));
       self.router.get('/landingPage/:uid'    , self.landingPage.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
-
+      self.router.get('/download_file/:file_number', self.fileDownload.bind(self));
+      self.router.get('/form_summary', self.formSummary.bind(self));
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
 
@@ -209,7 +213,6 @@ apiRoutes.prototype.uploadFile = function (req,res,next){
   // }
   // add a check for allowed file types as well.
   var self = this;
-
   if(!req.file){
     return this.errorResponse(res,400,"No file selected");
   }
@@ -217,14 +220,15 @@ apiRoutes.prototype.uploadFile = function (req,res,next){
   // increment counter and create a entry in uploadFile
   createCounter.bind(this)(function (err,counter){
     var uploadFile = new self.mongoObj.uploadedFileModel();
-    uploadFile.user             = req.user._id;
-    uploadFile.uploaded_date    = Date.now();
-    uploadFile.year             = 2008;
-    uploadFile.month            = 04;
-    uploadFile.status           = 'uploaded';
-    uploadFile.sap_status       = 'pending';
-    uploadFile.file_number      = counter.file_number;
-    uploadFile.file_name        = String(counter.file_number)+'_'+String(req.user.PARTNER);
+    uploadFile.user               = req.user._id;
+    uploadFile.uploaded_date      = Date.now();
+    uploadFile.year               = req.body.year;
+    uploadFile.month              = req.body.month;
+    uploadFile.status             = 'uploaded';
+    uploadFile.sap_status         = 'pending';
+    uploadFile.file_number        = counter.file_number;
+    uploadFile.file_name          = String(counter.file_number)+'_'+String(req.user.PARTNER);
+    uploadFile.original_file_name = String(req.file.originalname);
 
     uploadFile.save(function (err){
       if(err)
@@ -297,6 +301,63 @@ apiRoutes.prototype.signInMember = function (req,res,next){
   }
 };
 
+apiRoutes.prototype.fileDownload = function (req,res,next){
+  // 1. user must be looged in and bpkind === 0003
+  // 2. check on file number provided, and match user id as well.
+  // 3. if file is present present it for download other wise error.
+  // 4. need to handle success file also.
+  var self        = this,
+      file_number = req.params.file_number;
+
+  if(!req.user){
+   return self.errorResponse(res,400,"User should be logged in");
+  }
+
+  self.mongoObj.uploadedFileModel.findOne({file_number : file_number})
+  .exec(function (err,fileInfo){
+    if(err){
+      return self.errorResponse(res,500,"Internal server error");
+    }
+    else if(!fileInfo){
+      return self.errorResponse(res,404,'File info not found');
+    }
+    else{
+      return res.download(__dirname+'/../test.js');
+    }
+  });
+
+};
+
+apiRoutes.prototype.formSummary = function (req,res,next){
+  var self = this;
+
+  if(!req.user)
+    return self.errorResponse(res,400,"User should be looged in");
+
+  var partner = req.user.PARTNER;
+
+  self.mongoObj.uploadedFileModel.find({user : req.user._id})
+  .exec(function (err,data){
+    if(err)
+      return self.errorResponse(res,500,"Internal server error");
+    else{
+      var result = {
+        user : null,
+        filesInfo : null
+      };
+
+      result.user = req.user;
+
+      if(!data)
+        result.filesInfo = [];
+
+      if(data)
+        result.filesInfo = data;
+
+      return res.render('__dirname'+'/../public/form_summary.html',result);
+    }
+  }); 
+};
 
 apiRoutes.prototype.logout = function (req,res,next) {
   if(!req.user){

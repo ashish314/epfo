@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>CMPFO e-Services</title>
-    <link rel="shortcut icon" href="images/favicon.png">
+    <link rel="shortcut icon" href="/../images/favicon.png">
     <!-- Bootstrap -->
     <link href="/../css/bootstrap.css" rel="stylesheet">
     <link href="/../css/custom.css" rel="stylesheet">
@@ -70,7 +70,7 @@
                         <h3 class="panel-title">Upload</h3>
                     </div>
                     <a href="#" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
-                    <a href="#" class="list-group-item" onclick="showDiv()">Form Summary</a>
+                    <a href="http://localhost:8000/form_summary" class="list-group-item">Form Summary</a>
                     <a href="#" class="list-group-item">View Summary</a>
                      <a href="#" class="list-group-item">View Statement</a>
                       <a href="#" class="list-group-item">View Member Summary</a>
@@ -99,7 +99,7 @@
             <div class="form-group">
                 <label for="select" class="col-lg-2 control-label">Select Financial Year:</label>
                 <div class="col-lg-10">
-                    <select class="form-control" id="select">
+                    <select class="form-control" name='year' id="select">
                         <option>2015-16</option>
                         <option>2014-15</option>
                         <option>2013-14</option>
@@ -110,7 +110,7 @@
                 </div>
                 <label for="select" class="col-lg-2 control-label">Select Month:</label>
                 <div class="col-lg-10">
-                    <select class="form-control" id="select">
+                    <select class="form-control" name='month' id="select">
                         <option>January</option>
                         <option>February</option>
                         <option>March</option>
@@ -198,7 +198,13 @@
                 e.preventDefault();
                 $(this).ajaxSubmit({
                     error : function (err){
-                        alert(JSON.parse(err.responseText).message);
+                        console.log(err);
+                        if(err.status === 500){
+                            alert(err.responseText);
+                        }
+                        else{
+                            alert(JSON.parse(err.responseText).message);
+                        }
                         $("#upload-form")[0].reset();
                     },
                     success : function (res){

@@ -13,13 +13,14 @@ function vv_sap_response(){
   this.mongoObj       = null ;
   this.ftpClient      = null ;
   this.expectedFiles  = null ;
-  this.filesToFetch   = null ;
+  this.filesToFetch   = [] ;
   this.initialized    = false;
+  this.ftpPath        = './vv_forms/';
   this.resultStats    = {
-    filesFetched = 0,
-    processedSuccessfully = 0,
-    errors = 0,
-    filesWithErrors = [];    // means those which we were not able to process.
+    filesFetched : 0,
+    processedSuccessfully : 0,
+    errors : 0,
+    filesWithErrors : [],   // means those which we were not able to process.
   };
 };
 
@@ -43,7 +44,7 @@ vv_sap_response.prototype.init = function() {
       return self.getExpectedFiles();
     })
     .then(function (){
-      return self.getFilesToFetch();
+      return self.getFilesToFetch(self.ftpPath);
     })
     .then(function (){
       return initDefer.resolve();  
@@ -97,6 +98,7 @@ vv_sap_response.prototype.getFilesToFetch = function(ftpPath){
         return defer.resolve();
       }
       else{
+        files = files.map(function (i){ return i.name;});
         self.expectedFiles.forEach(function (eachExpectedFile){
           var len = eachExpectedFile.length;
           files.forEach(function (eachFileOnSap){
@@ -118,6 +120,7 @@ vv_sap_response.prototype.scheduler = function (defer,returned){
 
   if(!this.filesToFetch || this.filesToFetch.length === 0){
     console.log("all files processed");
+    self.end();
     return defer.resolve();
   }
   
@@ -169,19 +172,18 @@ vv_sap_response.prototype.fetchFile = function (fileName){
 
 vv_sap_response.prototype.end = function (){
   // this should end the process.
-  var defer = new deferred();
   if(!this.initialized)
-    return defer.resolve();
+    return false;
 
   this.initialized = false;
   this.ftpClient.end();
   this.ftpClient = null;
   this.expectedFiles = null;
-  this.filesToFetch = null;
+  this.filesToFetch = [];
   this.mongoObj = null;
 
   console.log("called end of vv_sap_response");
-  return defer.resolve();
+  return true;
 };
 
 vv_sap_response.prototype.process = function (fileName){
@@ -206,13 +208,16 @@ vv_sap_response.prototype.process = function (fileName){
     }
 
     else{
-      if(splitFile.indexOf('Success') != -1)
+      if(splitFile.indexOf('Success') != -1){
         fileInfo.sap_status = 'success';
+        fileInfo.success_file_path = config.save_to+fileName;
+      }
       else{
         fileInfo.sap_status = 'error';
+        fileInfo.error_file_path = config.save_to+fileName;
       }
       fileInfo.sap_status_date = Date.now();
-      fileInfo.success_file_path = config.save_to+fileName;
+      
       fileInfo.save();
       console.log("file records inserted");
       return defer.resolve();
@@ -243,6 +248,6 @@ var kickStartProcess = function (){
 
 exports = module.exports = kickStartProcess;
 
-
+// kickStartProcess(); 
 
 
