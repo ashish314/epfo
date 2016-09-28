@@ -71,6 +71,7 @@ apiRoutes.prototype.init = function (){
       self.router.get('/logout'         , self.logout.bind(self));
       self.router.get('/error_file_download/:file_number', self.errorFileDownload.bind(self));
       self.router.get('/success_file_download/:file_number', self.successFileDownload.bind(self));
+      self.router.get('/download_vv_form_sample', self.download_vv_form_sample.bind(self));
       self.router.get('/form_summary', self.formSummary.bind(self));
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
@@ -179,7 +180,7 @@ apiRoutes.prototype.landingPage = function (req,res,next){
         var result = {};
         result.user = user;
 
-        if(user.BKKIND === '0003')
+        if(user.BPKIND === '0003')
           return res.render(__dirname + '/../public/landing_page.ejs',result);
         else
           return res.render(__dirname + '/../public/member_landing.ejs',result);
@@ -336,6 +337,18 @@ apiRoutes.prototype.errorFileDownload = function (req,res,next){
       // return res.download(__dirname + '/../public/vv_form_response/test.txt');
     }
   });
+};
+
+apiRoutes.prototype.download_vv_form_sample = function (req,res,next) {
+  var self = this;
+
+  if(!req.user){
+    return res.redirect(307,'/');
+  }
+
+  else{
+    return res.download(config.vv_form_sample_download_path);
+  }
 };
 
 apiRoutes.prototype.successFileDownload = function (req,res,next) {

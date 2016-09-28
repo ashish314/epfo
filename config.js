@@ -27,6 +27,8 @@ var config = {
   uploadFileDir : '/Users/ashish/epfo/public/uploads/',
   vv_form_response : '/Users/ashish/epfo/public/vv_form_response/',
 
+  vv_form_sample_download_path : '/Users/ashish/epfo/public/vv_form_sample/vv_form_sample.csv',
+
 };
 
 module.exports = exports = config;

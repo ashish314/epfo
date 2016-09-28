@@ -27,7 +27,7 @@
 <body>
     <nav class="navbar navbar-default">
         <div class="jumbotron banner">
-            <a href="/index.html"><img src="logo.png" /></a>
+            <a href="/index.html"><img src="/../logo.png" /></a>
         </div>
         <div class="container-fluid">
             <div class="navbar-header">
@@ -63,7 +63,7 @@
         <div class="row">
             <div class="col-sm-3">
                 <div class="panel panel-info">
-                     <button type="button" class="btn btn-info btn-block btn-md">Download VV Data  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+                     <button type="button" id="vv_download" class="btn btn-info btn-block btn-md">Download VV Data  <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
                 </div>
                 <div class="panel panel-info">
                     <div class="panel-heading">
@@ -82,6 +82,7 @@
                     <a href="#" class="list-group-item">Generate Challan</a>
                     <a href="#" class="list-group-item">Download Challan</a>
                     <a href="#" class="list-group-item">Cancel Challan</a>
+                    <!-- <a href="http://localhost:8000/download_vv_form_sample" class="list-group-item">Download vv sample</a> -->
                 </div>
             </div>
             <div class="col-sm-6" >
@@ -155,6 +156,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Profile</h3>
             </div>
+
             <a href="#" class="list-group-item">View Profile</a>
             <a href="#" class="list-group-item">Edit Mobile No.</a>
             <a href="#" class="list-group-item">Edit Email</a>
@@ -173,6 +175,12 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="/../js/bootstrap.min.js"></script>
         <script type="text/javascript" src="/../js/employer_autofill_signupform.js"></script>
+        <script>
+        $("#vv_download").click(function (e){
+            window.location.href = "http://localhost:8000/download_vv_form_sample"
+        });
+
+        </script>
         <script>
            $('#logout_btn').click(function (e){
             e.preventDefault();
