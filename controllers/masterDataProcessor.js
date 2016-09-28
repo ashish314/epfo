@@ -97,7 +97,7 @@ masterDataProcessor.prototype.end = function (defer){
   this.ftpFetcherObj      = null ;
   this.mongoObj           = null ;
   this.readXmlDataObj     = null ;
-  this.processXmlDataObj  = null ; 
+  this.processXmlDataObj  = null ;
   this.storeXmlDataObj    = null ;
   this.initalized         = false;
   defer.resolve();

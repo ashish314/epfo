@@ -13,9 +13,9 @@ function vv_sap_response(){
   this.mongoObj       = null ;
   this.ftpClient      = null ;
   this.expectedFiles  = null ;
-  this.filesToFetch   = [] ;
   this.initialized    = false;
-  this.ftpPath        = './vv_forms/';
+  this.filesToFetch   = [];
+  this.ftpPath        = './vv_form_response/';
   this.resultStats    = {
     filesFetched : 0,
     processedSuccessfully : 0,
@@ -146,7 +146,7 @@ vv_sap_response.prototype.fetchFile = function (fileName){
       save_to              = config.vv_form_response, 
       defer   = new deferred();
 
-  if(!this.fileName)
+  if(!fileName)
     return defer.resolve();
 
   else{
@@ -168,22 +168,6 @@ vv_sap_response.prototype.fetchFile = function (fileName){
     });
     return defer.promise;
   }
-};
-
-vv_sap_response.prototype.end = function (){
-  // this should end the process.
-  if(!this.initialized)
-    return false;
-
-  this.initialized = false;
-  this.ftpClient.end();
-  this.ftpClient = null;
-  this.expectedFiles = null;
-  this.filesToFetch = [];
-  this.mongoObj = null;
-
-  console.log("called end of vv_sap_response");
-  return true;
 };
 
 vv_sap_response.prototype.process = function (fileName){
@@ -208,22 +192,39 @@ vv_sap_response.prototype.process = function (fileName){
     }
 
     else{
-      if(splitFile.indexOf('Success') != -1){
+      if(splitFile.indexOf('SUCCESS.xml') != -1){
         fileInfo.sap_status = 'success';
-        fileInfo.success_file_path = config.save_to+fileName;
+        fileInfo.success_file_path = config.vv_form_response+fileName;
       }
-      else{
+      else if(splitFile.indexOf('ERROR1.txt') != -1 || splitFile.indexOf('ERROR2.txt') != -1){
         fileInfo.sap_status = 'error';
-        fileInfo.error_file_path = config.save_to+fileName;
+        fileInfo.error_file_path = config.vv_form_response+fileName;
       }
       fileInfo.sap_status_date = Date.now();
       
-      fileInfo.save();
-      console.log("file records inserted");
-      return defer.resolve();
+      fileInfo.save(function (err){
+        console.log("file records inserted");
+        return defer.resolve();
+      });
     }
   });
   return defer.promise;
+};
+
+vv_sap_response.prototype.end = function (){
+  // this should end the process.
+  if(!this.initialized)
+    return false;
+
+  this.initialized = false;
+  this.ftpClient.end();
+  this.ftpClient = null;
+  this.expectedFiles = null;
+  this.filesToFetch = [];
+  this.mongoObj = null;
+
+  console.log("called end of vv_sap_response");
+  return true;
 };
 
 // below function should bind all the functions above and ensure that
@@ -248,6 +249,6 @@ var kickStartProcess = function (){
 
 exports = module.exports = kickStartProcess;
 
-// kickStartProcess(); 
+kickStartProcess(); 
 
 

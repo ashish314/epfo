@@ -10,6 +10,9 @@ var EXPRESS               = require('express'),
     multer                = require('multer'),
     config                = require(__dirname + '/../config.js'),
     ftp                   = require(__dirname + '/../controllers/ftpFetcher.js')(),
+    fs                    = require('fs'),
+    xml2js                = require('xml2js'),
+    parser                = new xml2js.Parser(),
     mongoObj              = require(__dirname + '/../controllers/mongo.js')();
 
 
@@ -66,7 +69,8 @@ apiRoutes.prototype.init = function (){
       self.router.post('/uploadFile'    , upload.single('testFile'), self.uploadFile.bind(self));
       self.router.get('/landingPage/:uid'    , self.landingPage.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
-      self.router.get('/download_file/:file_number', self.fileDownload.bind(self));
+      self.router.get('/error_file_download/:file_number', self.errorFileDownload.bind(self));
+      self.router.get('/success_file_download/:file_number', self.successFileDownload.bind(self));
       self.router.get('/form_summary', self.formSummary.bind(self));
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
@@ -175,7 +179,10 @@ apiRoutes.prototype.landingPage = function (req,res,next){
         var result = {};
         result.user = user;
 
-        return res.render(__dirname + '/../public/landing_page.ejs',result);
+        if(user.BKKIND === '0003')
+          return res.render(__dirname + '/../public/landing_page.ejs',result);
+        else
+          return res.render(__dirname + '/../public/member_landing.ejs',result);
       }
     });
   }
@@ -301,7 +308,7 @@ apiRoutes.prototype.signInMember = function (req,res,next){
   }
 };
 
-apiRoutes.prototype.fileDownload = function (req,res,next){
+apiRoutes.prototype.errorFileDownload = function (req,res,next){
   // 1. user must be looged in and bpkind === 0003
   // 2. check on file number provided, and match user id as well.
   // 3. if file is present present it for download other wise error.
@@ -321,19 +328,84 @@ apiRoutes.prototype.fileDownload = function (req,res,next){
     else if(!fileInfo){
       return self.errorResponse(res,404,'File info not found');
     }
+    else if(fileInfo && fileInfo.sap_status != 'error'){
+      return self.errorResponse(res,404,'No error generated yet');
+    }
     else{
-      return res.download(__dirname+'/../test.js');
+      return res.download(fileInfo.error_file_path);
+      // return res.download(__dirname + '/../public/vv_form_response/test.txt');
     }
   });
+};
 
+apiRoutes.prototype.successFileDownload = function (req,res,next) {
+  var self        = this,
+      file_number = req.params.file_number;
+
+  if(!req.user){
+    return self.errorResponse(res,400,"User should be logged in");
+  }
+
+  self.mongoObj.uploadedFileModel.findOne({file_number : file_number})
+  .populate('user')
+  .exec(function (err,fileInfo){
+    if(err){
+      return self.errorResponse(res,500,"Internal server error");
+    }
+    else if(!fileInfo){
+      return self.errorResponse(res,404,'File info not found');
+    }
+    else if(fileInfo && fileInfo.sap_status != 'success'){
+      return self.errorResponse(res,404,'No success generated yet');
+    }
+    else{
+      var contents = fs.readFileSync(fileInfo.success_file_path,'utf8');
+      // var contents = fs.readFileSync(__dirname + '/../public/vv_form_response/test.xml','utf8');
+      parser.parseString(contents,function (err,data){
+        var parsedData = data['asx:abap']['asx:values'][0]['TAB'][0]['FINAL'][0];
+        var updatedJson = {};
+
+        updatedJson.PROCESSID = parsedData.PROCESSID[0];
+        updatedJson.STATUS    = parsedData.STATUS[0];
+        updatedJson.REGUNIT   = parsedData.REGUNIT[0];
+        updatedJson.REXTNO    = parsedData.REXTNO[0];
+        updatedJson.TEMOL     = parsedData.TEMOL[0];
+        updatedJson.NSALARY   = parsedData.NSALARY[0];
+        updatedJson.ONEINC    = parsedData.ONEINC[0];
+        updatedJson.PFC_VC    = parsedData.PFC_VC[0];
+        updatedJson.PFC_MEM   = parsedData.PFC_MEM[0];
+        updatedJson.PFC_EMP   = parsedData.PFC_EMP[0];
+        updatedJson.PC_MEM    = parsedData.PC_MEM[0];
+        updatedJson.PC_EMP    = parsedData.PC_EMP[0]; 
+        updatedJson.TWP_PER   = parsedData.TWP_PER[0];
+        updatedJson.PF_CONT   = parsedData.PF_CONT[0];
+        updatedJson.PS_CONT   = parsedData.PS_CONT[0];
+        updatedJson.ADM_CHG   = parsedData.ADM_CHG[0];
+        updatedJson.TOT_CONT  = parsedData.TOT_CONT[0];
+        updatedJson.ZYEAR     = parsedData.ZYEAR[0];
+        updatedJson.ZMONTH    = parsedData.ZMONTH[0];
+        updatedJson.CUR_TYPE  = parsedData.CUR_TYPE[0];
+        updatedJson.ENT_DATE  = parsedData.ENT_DATE[0]; 
+        updatedJson.XBLNR     = parsedData.XBLNR[0];
+        updatedJson.UNIT_NAME = fileInfo.user.FULL_NAME;
+        updatedJson.FULL_NAME = fileInfo.user.FULL_NAME;
+        updatedJson.PF_SUM    = parseFloat(updatedJson.PFC_MEM) + parseFloat(updatedJson.PFC_EMP);
+        updatedJson.PC_SUM    = parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP);
+        updatedJson.PC_SUM    = parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP);
+
+        return res.render(__dirname + '/../public/challan.ejs',updatedJson);  
+
+      });
+    }
+  }); 
 };
 
 apiRoutes.prototype.formSummary = function (req,res,next){
   var self = this;
 
-  if(!req.user)
-    return self.errorResponse(res,400,"User should be looged in");
-
+  if(!req.user){
+    return res.redirect(307,'/');
+  }
   var partner = req.user.PARTNER;
 
   self.mongoObj.uploadedFileModel.find({user : req.user._id})
@@ -354,7 +426,7 @@ apiRoutes.prototype.formSummary = function (req,res,next){
       if(data)
         result.filesInfo = data;
 
-      return res.render('__dirname'+'/../public/form_summary.html',result);
+      return res.render(__dirname+'/../public/form_summary.ejs',result);
     }
   }); 
 };
