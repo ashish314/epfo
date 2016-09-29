@@ -1,3 +1,4 @@
+   var pan_no;
 $("#uid").focusout(function (){
     var uid = document.getElementById('uid').value;
     $.ajax
@@ -14,6 +15,7 @@ $("#uid").focusout(function (){
             document.getElementById('employer_name').value = "employer name to come";
             document.getElementById('addhar').value        = res.result.ADDHAR;
             document.getElementById('employer_name').value = res.result.employer_name;
+            pan_no                                         = res.result.PAN;
         },
     });
 });
@@ -34,6 +36,7 @@ $("#legacy_number").focusout(function (){
             document.getElementById('employer_name').value = "employer name to come";
             document.getElementById('addhar').value = res.result.ADDHAR;
             document.getElementById('employer_name').value = res.result.employer_name;
+            pan_no                                         = res.result.PAN;
         },
     });
 });

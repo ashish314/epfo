@@ -40,18 +40,6 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
         <li><a href="#">Link</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
@@ -70,7 +58,7 @@
   <!-- </div> -->
   
     
-  <form method="post" action="http://localhost:8000/signupEmployer" id='signupEmployer'> 
+  <form name="myForm"method="post" action="http://localhost:8000/signupEmployer" id='signupEmployer'> 
     <h1>Employer Sign up  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -129,9 +117,9 @@
         </div>
 
         <div class="form-group">
-          <p>Mobile<span>*</span></p>
+          <p>Mobile<span>*</span>(Please Enter Valid 10 digit no.)</p>
           <span class="icon-case"><i class="glyphicon glyphicon-earphone"></i></span>
-          <input type="number" name="mobile" id="mobile" required/>
+          <input type="number" name="mobile" id="mobile" maxlength="10" size="10" required/>
           <div class="validation"></div>
         </div>
 
@@ -166,7 +154,10 @@
       // submit button javascript for error checking.
       $("#submit").click(function (e){
         e.preventDefault();
+        var x = document.forms["myForm"]["pan"].value;
         var a = $("#signupEmployer").serialize();
+
+       if( pan_no ==x){
         // [{name : 'field name', value : 'value'}]
         $.ajax({
           type : 'POST',
@@ -184,9 +175,47 @@
             window.location.href = "http://localhost:8000/landingPage/"+res.result.PARTNER;
           } 
         });
+      }
+      else{
+        alert("Please enter Correct PAN no.");
+      }
       });
 
 
+    </script>
+    <script>
+      document.getElementById("email").onchange = function() {verifyEmail()};
+      function verifyEmail() {
+    var x = document.forms["myForm"]["email"].value;
+    // console.log(x);
+    var atpos = x.indexOf("@");
+    var dotpos = x.lastIndexOf(".");
+    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+        alert("Please enter a VALID E-mail Address");
+        return false;
+    }
+}
+    </script>
+    <script>
+      document.getElementById("mobile").onchange = function(){verifyMobile()};
+      function verifyMobile(){
+        var x = document.forms["myForm"]["mobile"].value;
+        if(x.length!==10)
+          alert("Please enter VALID Mobile No.");
+        return false;
+      }
+    </script>
+    <script >
+      document.getElementById("pan").onchange = function(){verifyPan()};
+      function verifyPan(){
+      //function for check if user enters pan no before uid
+
+
+        var x = document.forms["myForm"]["pan"].value;
+
+        if(x!==pan_no)
+          alert("Please enter VALID Pan No.");
+      }
     </script>
 
   </body>

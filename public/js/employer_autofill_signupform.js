@@ -1,3 +1,4 @@
+    var pan_no;
 $("#uid").focusout(function (){
     var uid = document.getElementById('uid').value;
     if(uid){
@@ -13,7 +14,7 @@ $("#uid").focusout(function (){
                 document.getElementById('name').value               = res.result.FULL_NAME;
                 document.getElementById('address').value            = "address to come";
                 document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
-
+                                                          pan_no    = res.result.PAN;
                 // add a check on submit that provided pan and fetched pan are matched
             },
         });
@@ -31,10 +32,11 @@ $("#legacy_number").focusout(function (){
                 alert(res.responseJSON.message);
             },
             success : function (res){
-                document.getElementById('uid').value = res.result.PARTNER;
-                document.getElementById('name').value = res.result.FULL_NAME;
-                document.getElementById('address').value = "address to come";
+                document.getElementById('uid').value                = res.result.PARTNER;
+                document.getElementById('name').value               = res.result.FULL_NAME;
+                document.getElementById('address').value            = "address to come";
                 document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
+                pan_no                                              = res.result.PAN;
             },
         });
     }
