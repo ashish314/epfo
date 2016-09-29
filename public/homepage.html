@@ -12,6 +12,7 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -32,10 +33,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Home</a>
+      <a class="navbar-brand"></a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+    <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
         <li><a href="#">Link</a></li>
@@ -56,19 +57,19 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
       </ul>
-    </div>
+    </div> -->
   </div>
   </nav>
   <div class="col-md-3  col-sm-4 col-xs-12">
   <section>
                 <div id="container_buttons">
                     <p>
-                        <a class="a_demo_four" href="http://localhost:8000/signin_member">
+                        <a id="mem" class="a_demo_four" href="#">
                             Member Log-in
                         </a>
                     </p>
                     <p>
-                        <a href="http://localhost:8000/signin_employer" class="a_demo_four">
+                        <a id="emp" href="#" class="a_demo_four">
                            Employer Log-in
                         </a>
                     </p>
@@ -165,6 +166,16 @@ Providing a transparent, people-friendly and responsive administration for the b
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
+
+    <script>
+      $(document).ready(function (){
+        var mem = baseUrl + "signin_member";
+        var emp = baseUrl + "signin_employer";
+
+        document.getElementById("mem").setAttribute("href",mem);
+        document.getElementById("emp").setAttribute("href",emp);
+      });
+    </script>
 
   </body>
 
