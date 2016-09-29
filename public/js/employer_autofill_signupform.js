@@ -1,11 +1,12 @@
     var pan_no;
+    var baseUrl = "http://localhost:8000/";
 $("#uid").focusout(function (){
     var uid = document.getElementById('uid').value;
     if(uid){
         $.ajax
         ({
             type  : 'GET',
-            url   : "http://localhost:8000/autoFill/?uid="+uid+'&bpkind=0003',
+            url   : baseUrl + "autoFill/?uid="+uid+'&bpkind=0003',
             error : function (res){
                 alert(res.responseJSON.message);
             },
@@ -27,7 +28,7 @@ $("#legacy_number").focusout(function (){
         $.ajax
         ({
             type  : 'GET',
-            url   : "http://localhost:8000/autoFill/?legacy_number="+legacy_number+'&bpkind=0003',
+            url   : baseUrl + "autoFill/?legacy_number="+legacy_number+'&bpkind=0003',
             error : function (res){
                 alert(res.responseJSON.message);
             },

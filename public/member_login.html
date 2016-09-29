@@ -13,6 +13,8 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    
+    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -33,10 +35,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/index.html">Home</a>
+      <a class="navbar-brand"></a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+    <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
         <li><a href="#">Link</a></li>
@@ -57,7 +59,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
       </ul>
-    </div>
+    </div> -->
   </div>
   </nav>
   
@@ -70,7 +72,7 @@
   <!-- </div> -->
   
     
-  <form method='post' action="http://localhost:8000/signinMember" id='member_login'>
+  <form method='post' id='member_login'>
     <h1>Login Page  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -127,7 +129,7 @@
       // [{name : 'field name', value : 'value'}]
       $.ajax({
         type : 'POST',
-        url  : 'http://localhost:8000/signinMember',
+        url  : baseUrl + 'signinMember',
         data : a,
         error : function (err){
           alert(err.responseJSON.message);
@@ -136,7 +138,7 @@
         success : function (res){
           // just redirect it to landing page.
           // user data in res.result. 
-          window.location.href = "http://localhost:8000/landingPage/"+res.result.PARTNER;
+          window.location.href = baseUrl + "landingPage/"+res.result.PARTNER;
         } 
       });
     });

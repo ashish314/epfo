@@ -217,7 +217,7 @@ vv_sap_response.prototype.process = function (fileName){
         fileInfo.sap_status = 'success';
         fileInfo.success_file_path = config.vv_form_response+fileName;
       }
-      else if(splitFile.indexOf('ERROR1.txt') != -1 || splitFile.indexOf('ERROR2.txt') != -1){
+      else if(splitFile.indexOf('ERROR1.xls') != -1 || splitFile.indexOf('ERROR2.xls') != -1){
         fileInfo.sap_status = 'error';
         fileInfo.error_file_path = config.vv_form_response+fileName;
       }

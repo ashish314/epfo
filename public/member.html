@@ -13,6 +13,8 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+    <script src="/../js/jquery.form.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -33,10 +35,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/index.html">Home</a>
+      <a class="navbar-brand"></a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+    <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
         <li><a href="#">Link</a></li>
@@ -57,7 +59,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
       </ul>
-    </div>
+    </div> -->
   </div>
   </nav>
   
@@ -70,7 +72,7 @@
   <!-- </div> -->
   
     
-  <form name="myForm" action="http://localhost:8000/signupMember" method="post" id='signupMember_form'>
+  <form name="myForm" action="#" method="post" id='signupMember_form'>
     <h1>Member Sign up  <span class="glyphicon glyphicon-send" aria-hidden="true"></span></h1>
 
     <div class="contentform">
@@ -169,13 +171,11 @@
     // submit button javascript for error checking.
     $("#submit").click(function (e){
       e.preventDefault();
-      var x = document.forms["myForm"]["pan"].value;
       var a = $("#signupMember_form").serialize();
       // [{name : 'field name', value : 'value'}]
-      if( pan_no ==x){
       $.ajax({
         type : 'POST',
-        url  : 'http://localhost:8000/signupMember',
+        url  : baseUrl + 'signupMember',
         data : a,
         error : function (err){
           alert(err.responseJSON.message);
@@ -186,12 +186,9 @@
           // user data in res.result. 
 
           // (http://localhost:8000/landingPage/2000630242)
-          window.location.href = "http://localhost:8000/landingPage/"+res.result.PARTNER;
+          window.location.href = baseUrl + "landingPage/"+res.result.PARTNER;
         } 
       });
-    }else{
-        alert("Please enter Correct PAN no.");
-      }
     });
 
 
@@ -227,6 +224,23 @@
         return false;
       }
 </script>
+
+<script >
+    $( document ).ready(function() {
+      document.getElementById("pan").onchange = function(){verifyPan()};
+        function verifyPan(){
+        //function for check if user enters pan no before uid
+          var x = document.forms["myForm"]["pan"].value;
+
+          if(!pan_no && x.length!=10){
+           alert("Please enter VALID Pan No."); 
+          }
+          if(pan_no && x!= pan_no){
+            alert("Please enter correct pan number"); 
+          }
+        }
+    });
+    </script>
 
   </body>
 

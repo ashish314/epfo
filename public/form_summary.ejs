@@ -14,6 +14,7 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
     <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -21,6 +22,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
+
 
 <body>
     <nav class="navbar navbar-default">
@@ -35,9 +37,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index.html">Home</a>
+                <a class="navbar-brand"></a>
             </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+            <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Member <span class="sr-only">(current)</span></a></li>
                     <li><a href="#">Employer</a></li>
@@ -54,7 +56,7 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </div>
     </nav>
     <div class="container-fluid">
@@ -67,7 +69,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Upload</h3>
                     </div>
-                    <a href="#" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
+                    <a id='homepage' href="#" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
                     <a href="/form_summary.html" class="list-group-item">Form Summary</a>
                     <a href="#" class="list-group-item">View Summary</a>
                     <a href="#" class="list-group-item">View Statement</a>
@@ -113,10 +115,10 @@
              <td>-</td>
            <% } %>
            <%if (filesInfo[i].sap_status === 'success') { %>
-             <td><a href='http://localhost:8000/success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
+             <td><a id='success' href='<%= baseUrl %>success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
            <% } %>
            <%if (filesInfo[i].sap_status === 'error') { %>
-             <td><a href='http://localhost:8000/error_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
+             <td><a id='error' href="<%= baseUrl%>error_file_download/<%= filesInfo[i].file_number %>">download</a></td>
            <% } %>
            <!-- <td><%= filesInfo[i].sap_status %></td> -->
            </tr>
@@ -161,6 +163,13 @@
         function showDiv() {
             document.getElementById('upload').style.display = "block";
         }
+        </script>
+
+        <script>
+            $(document).ready(function (){
+                document.getElementById("homepage").setAttribute("href",baseUrl);
+            });
+            
         </script>
 
 </footer>

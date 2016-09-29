@@ -24,7 +24,6 @@ var multerOpts = {
     },
 
     filename   : function (req, file, cb) {
-      // console.log("came in filename");
       cb(null,file.originalname)
     }
   }),
@@ -432,6 +431,7 @@ apiRoutes.prototype.formSummary = function (req,res,next){
       };
 
       result.user = req.user;
+      result.baseUrl = config.baseUrl;
 
       if(!data)
         result.filesInfo = [];
@@ -455,7 +455,12 @@ apiRoutes.prototype.logout = function (req,res,next) {
 };
 
 apiRoutes.prototype.homepage = function (req,res,next) {
-  console.log("came here on homepage");
+    if(req.user)
+      return res.redirect(307,config.baseUrl + 'landingPage/'+req.user.PARTNER);
+  
+    else{
+      return res.render(__dirname + '/../public/homepage.html');
+    }
 };
 
 apiRoutes.prototype.autoFillForm = function (req,res,next){
@@ -505,19 +510,21 @@ apiRoutes.prototype.signin_member = function (req,res,next){
 
 apiRoutes.prototype.signUpEmployer = function (req,res,next){
   var self = this;
-  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan',];
+  var requiredFields = ['uid','legacy_number','name','pan','email','mobile','password'];
   req.body.bpkind    = '0003';
   var bodyParams     = req.body;
+  var missingParam   = null;
+
   if(!bodyParams){
       return self.errorResponse(res,400,"Invalid request");
+  }
+  for (var i = 0 ; i < requiredFields.length ; i++){
+    if(!bodyParams[requiredFields[i]] || _.isEmpty(bodyParams[requiredFields[i]])){
+      return self.errorResponse(res,400,requiredFields[i] + ' is required');
+      break;
     }
-  requiredFields.forEach(function (eachField){
-    if(!bodyParams[eachField] || _.isEmpty(bodyParams[eachField])){
-      console.log(eachField);
-      return self.errorResponse(res,400,bodyParams[eachField]+' is required');
-    }
-  }); 
-
+  }
+  
   this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0003'})
   .exec(function (err,user){
     if(err){
@@ -561,11 +568,12 @@ apiRoutes.prototype.signUpMember = function (req,res,next){
       return self.errorResponse(res,400,"Invalid request");
     }
 
-  requiredFields.forEach(function (eachField){
-    if(!bodyParams[eachField] || _.isEmpty(bodyParams[eachField])){
-      return self.errorResponse(res,400,bodyParams[eachField]+' is required');
+  for (var i = 0 ; i < requiredFields.length ; i++){
+    if(!bodyParams[requiredFields[i]] || _.isEmpty(bodyParams[requiredFields[i]])){
+      return self.errorResponse(res,400,requiredFields[i] + ' is required');
+      break;
     }
-  }); 
+  } 
 
   this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0001'})
   .exec(function (err,user){

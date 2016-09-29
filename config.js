@@ -22,6 +22,8 @@ var config = {
   },
   
   redis : "redis://localhost:6379",
+  
+  baseUrl : 'http://localhost:8000/',
 
   sap_vv_response_path : './vv_form_response/',
   uploadFileDir : '/Users/ashish/epfo/public/uploads/',
