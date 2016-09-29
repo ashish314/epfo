@@ -12,7 +12,7 @@ processXmlData.prototype.init = function (){
 };
 
 processXmlData.prototype.processRecord = function (record,options){
-  var processDefer = new deferred(),
+  var processDefer  = new deferred(),
       updatedRecord = record;
   if(!record)
     return processDefer.reject("No data to process");

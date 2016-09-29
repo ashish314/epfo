@@ -1,0 +1,4 @@
+SAP Field Name,Emp Code,PF Account No,SAP BP No.,Name,Father's / Husband Name,Total Emolument,Notional Salary,1 Increment,VC-M,PF-M (10.84%),PF-E (10.84%),FP-M (1.16%),FP-E (1.16%),2% Notional Salary - M,Provident Fund,Pension Fund,Total,Registered Unit,Year,Month,Identification Type,Identification Number
+M/O,M,M,M,M,M,O,O,O,M,M,M,O,O,M,O,O,O,M,M,M,M,M
+Field Type,CHAR,CHAR,INT,CHAR,CHAR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CURR,CHAR,INT,INT,INT,INT
+Field Length,8,,,,,,,,,,,,,,,,,,,,,

@@ -45,22 +45,22 @@ ftpFetcher.prototype.list = function (){
 
 ftpFetcher.prototype.initiateDownloadProcess = function() {
   var self = this,
-      downloadDefer = new deferred();
+      initiateDownloadProcessDefer = new deferred();
 
   this.init()
   .then(function (){
     return self.list();
   })
   .then(function (){
-    return self.scheduler(downloadDefer);
+    return self.scheduler(initiateDownloadProcessDefer);
   })
   .then(function (){
-    return downloadDefer.resolve();
+    return initiateDownloadProcessDefer.resolve();
   },function (err){
     console.log(err);
     process.exit(1);
   });
-  return downloadDefer.promise;
+  return initiateDownloadProcessDefer.promise;
 };
 
 ftpFetcher.prototype.scheduler = function (defer){
@@ -72,7 +72,10 @@ ftpFetcher.prototype.scheduler = function (defer){
   }
   else{
     // function here which will process and call this function.
-    self.process()
+    self.downloadFiles()
+    .then(function (fileName){
+      return self.moveFileToArchive(fileName);
+    })
     .then(function (){
       self.scheduler(defer);
     },function (err){
@@ -83,7 +86,7 @@ ftpFetcher.prototype.scheduler = function (defer){
   }
 };
 
-ftpFetcher.prototype.process = function (){
+ftpFetcher.prototype.downloadFiles = function (){
   var processDefer = new deferred(),
       self         = this;
 
@@ -102,7 +105,7 @@ ftpFetcher.prototype.process = function (){
 
         stream.once('close', function (){
           console.log("file downloaded");
-          return processDefer.resolve();
+          return processDefer.resolve(file.name);
         });
 
         stream.pipe(fs.createWriteStream(config.masterDataDownloadPath+file.name,{flags:'w',autoClose:true,defaultEncoding:'utf8'}));
@@ -110,6 +113,31 @@ ftpFetcher.prototype.process = function (){
     });
     return processDefer.promise;
   }
+
+};
+
+ftpFetcher.prototype.moveFileToArchive = function (fileName){
+  var moveDefer = new deferred(),
+      self      = this;
+
+
+// for now we won't move files to archive.
+  return moveDefer.resolve(); 
+
+
+  if(!fileName){
+    return moveDefer.resolve();
+  }
+  var oldPath = '/masterDataFiles/'+fileName,
+      newPath = '/archive/'+fileName;
+
+  self.client.rename(oldPath,newPath,function (err,success){
+    if(err)
+      return moveDefer.reject(err);
+
+    console.log("moved file "+fileName+' to archive');
+    return moveDefer.resolve();
+  });
 
 };
 

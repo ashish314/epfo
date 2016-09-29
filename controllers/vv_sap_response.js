@@ -13,7 +13,7 @@ function vv_sap_response(){
   this.mongoObj       = null ;
   this.ftpClient      = null ;
   this.expectedFiles  = null ;
-  this.initialized    = false;
+  this.processStarted = false;
   this.filesToFetch   = [];
   this.ftpPath        = './vv_form_response/';
   this.resultStats    = {
@@ -28,8 +28,11 @@ vv_sap_response.prototype.init = function() {
   var self = this,
       initDefer = new deferred();
 
-  if(this.initialized)
-    return initDefer.resolve();
+  if(this.processStarted)
+    return initDefer.reject({initError : "previous process is still running"});
+
+  if(!this.processStarted)
+    this.processStarted = true;
   
   if(!this.ftpClient){
     this.ftpClient = new ftp();
@@ -48,9 +51,6 @@ vv_sap_response.prototype.init = function() {
     })
     .then(function (){
       return initDefer.resolve();  
-    })
-    .then(function (){
-      self.initialized  = true;
 
     },function (err){
       console.log(err);
@@ -127,6 +127,9 @@ vv_sap_response.prototype.scheduler = function (defer,returned){
   var file = this.filesToFetch.shift();
   this.fetchFile(file)
   .then(function (){
+    return self.moveFileToArchive(file);
+  })
+  .then(function (){
     return self.process(file);
   })
   .then(function (){
@@ -138,6 +141,24 @@ vv_sap_response.prototype.scheduler = function (defer,returned){
 
   if(!returned && !defer.resolved)
     return defer.promise;
+};
+
+
+vv_sap_response.prototype.moveFileToArchive = function (fileName){
+  var oldPath = config.sap_vv_response_path+fileName,
+      newPath = "/archive/"+fileName,
+      moveDefer = new deferred();
+
+  this.ftpClient.rename(oldPath,newPath,function (err,success){
+    if(err)
+      return moveDefer.reject(err);
+
+    console.log(err);
+    console.log(success);
+    console.log("Moved "+fileName+' to archive');
+    return moveDefer.resolve();
+  });
+  return moveDefer.promise;
 };
 
 vv_sap_response.prototype.fetchFile = function (fileName){
@@ -159,7 +180,7 @@ vv_sap_response.prototype.fetchFile = function (fileName){
         fs.closeSync(fs.openSync(save_to+fileName, 'w'));
 
         stream.once('close', function (){
-          console.log("file downloaded");
+          console.log("file downloaded "+ fileName);
           return defer.resolve();
         });
 
@@ -213,15 +234,13 @@ vv_sap_response.prototype.process = function (fileName){
 
 vv_sap_response.prototype.end = function (){
   // this should end the process.
-  if(!this.initialized)
-    return false;
-
-  this.initialized = false;
   this.ftpClient.end();
-  this.ftpClient = null;
-  this.expectedFiles = null;
-  this.filesToFetch = [];
-  this.mongoObj = null;
+  this.initialized      = false;
+  this.ftpClient        = null;
+  this.expectedFiles    = null;
+  this.filesToFetch     = [];
+  this.mongoObj         = null;
+  this.processStarted   = false;
 
   console.log("called end of vv_sap_response");
   return true;
@@ -242,13 +261,22 @@ var kickStartProcess = function (){
   })
   .then(function (){
     console.log("all files processed should call a end");
+    vv_sap_response_obj = null;
   },function (err){
-    console.log("some err occured, need to deal with it");
+    if(err.initError)
+      console.log("previous process is still running, will wait for its completion");
+    else{
+      console.log(err);
+      vv_sap_response_obj = null;
+    }
   });
 };
 
 exports = module.exports = kickStartProcess;
 
-kickStartProcess(); 
+setInterval(function (){
+  kickStartProcess();   
+},30000);
+
 
 
