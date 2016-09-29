@@ -2,3 +2,7 @@ epfoDocs/
 node_modules/
 public/uploads/
 public/masterDataFiles/
+public/js/member_autofill_signupform.js
+public/js/employer_autofill_signupform.js
+public/js/constant.js
+config.js
