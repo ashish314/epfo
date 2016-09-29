@@ -1,5 +1,5 @@
    var pan_no;
-   var baseUrl = "http://localhost:8000/";
+   var baseUrl = "http://52.66.165.35:8000/";
 $("#uid").focusout(function (){
     var uid = document.getElementById('uid').value;
     $.ajax

@@ -127,12 +127,12 @@ Providing a transparent, people-friendly and responsive administration for the b
   <section>
                 <div id="container_buttons">
                     <p>
-                        <a class="a_demo_four" href="http://localhost:8000/signup_member">
+                        <a id="reg_mem" class="a_demo_four" href="#">
                            Member Registration
                         </a>
                     </p>
                     <p>
-                        <a href="http://localhost:8000/signup_employer" class="a_demo_four">
+                        <a id="reg_emp" href="http://localhost:8000/signup_employer" class="a_demo_four">
                         Employer Registration
                         </a>
                     </p>
@@ -169,11 +169,15 @@ Providing a transparent, people-friendly and responsive administration for the b
 
     <script>
       $(document).ready(function (){
-        var mem = baseUrl + "signin_member";
-        var emp = baseUrl + "signin_employer";
+        var mem     = baseUrl + "signin_member";
+        var emp     = baseUrl + "signin_employer";
+        var reg_mem = baseUrl + 'signup_member';
+        var reg_emp = baseUrl + 'signup_employer';
 
         document.getElementById("mem").setAttribute("href",mem);
         document.getElementById("emp").setAttribute("href",emp);
+        document.getElementById("reg_mem").setAttribute("href",reg_mem);
+        document.getElementById("reg_emp").setAttribute("href",reg_emp);
       });
     </script>
 

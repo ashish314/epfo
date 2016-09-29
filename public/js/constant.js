@@ -1,1 +1,1 @@
-var baseUrl = "http://localhost:8000/";
+var baseUrl = "http://52.66.165.35:8000/";
