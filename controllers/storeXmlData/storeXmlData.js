@@ -30,11 +30,12 @@ storeXmlData.prototype.storeRecord = function (record,options){
 
   this.mongo.masterDataModel.create(record,function (defer,err,result){
     if(err){
-      defer.reject(err);
+      console.log(err);
+      return defer.resolve();
     }
     else{
       self.insertedRecords++;
-      defer.resolve(result);
+      return defer.resolve(result);
     }
   }.bind(null,storeDefer));
 

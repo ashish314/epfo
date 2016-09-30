@@ -31,7 +31,8 @@ readXmlData.prototype.init = function() {
 };
 
 readXmlData.prototype.normalizeData = function (data,defer,options){
-  var self            = this;
+  var self            = this,
+      defer           = defer || null;
   // ensure xml data is in correct format.
   try{
     data.forEach(function (eachRecord) {
@@ -65,7 +66,7 @@ readXmlData.prototype.normalizeData = function (data,defer,options){
   
   
   self.totalRecords = self.dataArray.length;
-  defer.resolve();
+  return defer.resolve();
 };
 
 readXmlData.prototype.checkRequiredFields = function (requiredFieldObj,dataObj){
