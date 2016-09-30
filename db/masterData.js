@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 function getSchema() {
     var schema = new mongoose.Schema({
 
-        PARTNER         : { type : String }, // uid
+        PARTNER         : { type : String, unique: true }, // uid
         BPKIND          : { type : String }, // member/employer (0001 for member 0003 for employer)
         BPEXT           : { type : String }, // legacy/cmpfo (old)
         FULL_NAME       : { type : String }, // full name

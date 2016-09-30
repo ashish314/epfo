@@ -4,6 +4,7 @@ var EXPRESS               = require('express'),
     ROUTER                = EXPRESS.Router(),
     _                     = require('lodash'),
     sha1                  = require('sha1'),
+    inWordsEn             = require('in-words').en,
     REQUEST               = require('request'),
     deferred              = require('deferred'),
     authenticate          = require(__dirname + '/../controllers/userAuthentication/userAuthentication.js'),
@@ -72,6 +73,7 @@ apiRoutes.prototype.init = function (){
       self.router.get('/success_file_download/:file_number', self.successFileDownload.bind(self));
       self.router.get('/download_vv_form_sample', self.download_vv_form_sample.bind(self));
       self.router.get('/form_summary', self.formSummary.bind(self));
+      self.router.post('/updateProfile',self.updateProfile.bind(self));
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
       self.router.get('/logout'         , self.logout.bind(self));
 
@@ -90,6 +92,24 @@ apiRoutes.prototype.init = function (){
   return initDefer.promise;
 };
 
+
+function checkValid(searchObj,pan,cb){
+  this.mongoObj.masterDataModel.findOne(searchObj,function (err,user,message){
+    if(err)
+      cb(err,false,false);
+
+    else if(!user){
+      cb(null,false,false);
+    }
+    else{
+      if(user.pan  === pan) 
+        cb(null,true,'Pan is already registered');
+      else{
+        cb(null,true,'Addhar is already registered');
+      }
+    }
+  });
+};
 
 function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
   var self      = this;
@@ -148,6 +168,46 @@ function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
   }
 };
 
+
+apiRoutes.prototype.updateProfile = function (req,res,next){
+  if(!req.user){
+    return res.redirect(307,'/');
+  }
+
+  var self = this,
+      requiredFields = ['mobile' , 'email', ,'new_password','confirm_password'];
+
+  for(var i =0 ;i< requiredFields.length ; i++){
+    if(!req.body[requiredFields[i]]){
+      return self.errorResponse(res,400,requiredFields[i]+ " is required");
+      break;
+    }
+  } 
+
+  if(req.body.new_password != req.body.confirm_password){
+    return self.errorResponse(res,400,"Passwords do not match");
+  }
+
+  self.mongoObj.masterDataModel.findOne({PARTNER : req.user.PARTNER})
+  .exec(function (err,user){
+    if(err){
+      return self.errorResponse(res,400,"Internal server error");
+    }
+    else{
+      user.UPDATED_EMAIL    = req.body.email;
+      user.UPDATED_TEL_NUM  = req.body.mobile;
+      user.password         = sha1(req.body.new_password);
+      user.save(function (err){
+        if(err){
+          return self.errorResponse(res,400,"Internal server error");
+        }
+        else{
+          return self.successResponse(res,200,"success",user);
+        }
+      });
+    }
+  });
+};
 
 apiRoutes.prototype.logout = function (req,res,next){
   if(!req.user){
@@ -401,9 +461,11 @@ apiRoutes.prototype.successFileDownload = function (req,res,next) {
         updatedJson.XBLNR     = parsedData.XBLNR[0];
         updatedJson.UNIT_NAME = fileInfo.user.FULL_NAME;
         updatedJson.FULL_NAME = fileInfo.user.FULL_NAME;
-        updatedJson.PF_SUM    = parseFloat(updatedJson.PFC_MEM) + parseFloat(updatedJson.PFC_EMP);
-        updatedJson.PC_SUM    = parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP);
-        updatedJson.PC_SUM    = parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP);
+        updatedJson.PF_SUM    = (parseFloat(updatedJson.PFC_MEM) + parseFloat(updatedJson.PFC_EMP)).toFixed(2);
+        updatedJson.PC_SUM    = (parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP)).toFixed(2);
+        updatedJson.PC_SUM    = (parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP)).toFixed(2);
+        updatedJson.AMT_WORDS = inWordsEn(updatedJson.TOT_CONT);
+
 
         return res.render(__dirname + '/../public/challan.ejs',updatedJson);  
 
@@ -525,32 +587,40 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
     }
   }
   
-  this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0003'})
-  .exec(function (err,user){
-    if(err){
+  checkValid.bind(this)({pan : bodyParams.pan},bodyParams.pan,function (err,found,message){
+    if(err)
       return self.errorResponse(res,500,"Internal server error");
-    }
-    else if(!user || _.isEmpty(user) ){
-      return self.errorResponse(res,404,"User not found");
-    }
-    // else if(user && user.password){
-    //   return self.errorResponse(res,400,"User already signed up");
-    // }
+    else if(found)
+      return self.errorResponse(res,400,message);
     else{
-      user.UPDATED_TEL_NUM = req.body['mobile'] || null;
-      user.UPDATED_EMAIL   = req.body['email']  || null;
-      user.password        = sha1(req.body['password']);
-      user.save(function (err){
+      self.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0003'})
+      .exec(function (err,user){
         if(err){
           return self.errorResponse(res,500,"Internal server error");
         }
+        else if(!user || _.isEmpty(user) ){
+          return self.errorResponse(res,404,"User not found");
+        }
+        // else if(user && user.password){
+        //   return self.errorResponse(res,400,"User already signed up");
+        // }
         else{
-          req.login(user,function (err){
+          user.UPDATED_TEL_NUM = req.body['mobile'] || null;
+          user.UPDATED_EMAIL   = req.body['email']  || null;
+          user.password        = sha1(req.body['password']);
+          user.save(function (err){
             if(err){
-              return self.errorResponse(res,500,"Server error");
+              return self.errorResponse(res,500,"Internal server error");
             }
             else{
-              return self.successResponse(res,200,"success",user);
+              req.login(user,function (err){
+                if(err){
+                  return self.errorResponse(res,500,"Server error");
+                }
+                else{
+                  return self.successResponse(res,200,"success",user);
+                }
+              });
             }
           });
         }
@@ -561,7 +631,7 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
 
 apiRoutes.prototype.signUpMember = function (req,res,next){
   var self = this;
-  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name'];
+  var requiredFields = ['uid','legacy_number','email','password','mobile','name','pan','employer_name','addhar'];
   req.body.bpkind    = '0001';
   var bodyParams     = req.body;
   if(!bodyParams){
@@ -574,33 +644,42 @@ apiRoutes.prototype.signUpMember = function (req,res,next){
       break;
     }
   } 
-
-  this.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0001'})
-  .exec(function (err,user){
-    if(err){
+  var search = {$or :[{'pan' : bodyParams.pan},{'addhar' : bodyParams.addhar}] };
+  checkValid.bind(this)(search,bodyParams.pan,function (err,found,message){
+    if(err)
       return self.errorResponse(res,500,"Internal server error");
+    else if(found){
+      return self.errorResponse(res,400,message);
     }
-    else if(!user || _.isEmpty(user) ){
-      return self.errorResponse(res,404,"User not found");
-    }
-    // else if(user && user.password){
-    //   return self.errorResponse(res,400,"User already signed up");
-    // }
     else{
-      user.UPDATED_TEL_NUM = req.body['mobile'] || null;
-      user.UPDATED_EMAIL   = req.body['email']  || null;
-      user.password        = sha1(req.body['password']);
-      user.save(function (err){
+      self.mongoObj.masterDataModel.findOne({PARTNER : bodyParams.uid, BPKIND : '0001'})
+      .exec(function (err,user){
         if(err){
           return self.errorResponse(res,500,"Internal server error");
         }
+        else if(!user || _.isEmpty(user) ){
+          return self.errorResponse(res,404,"User not found");
+        }
+        // else if(user && user.password){
+        //   return self.errorResponse(res,400,"User already signed up");
+        // }
         else{
-          req.login(user,function (err){
+          user.UPDATED_TEL_NUM = req.body['mobile'] || null;
+          user.UPDATED_EMAIL   = req.body['email']  || null;
+          user.password        = sha1(req.body['password']);
+          user.save(function (err){
             if(err){
-              return self.errorResponse(res,500,"Server error");
+              return self.errorResponse(res,500,"Internal server error");
             }
             else{
-              return self.successResponse(res,200,"success",user);
+              req.login(user,function (err){
+                if(err){
+                  return self.errorResponse(res,500,"Server error");
+                }
+                else{
+                  return self.successResponse(res,200,"success",user);
+                }
+              });
             }
           });
         }

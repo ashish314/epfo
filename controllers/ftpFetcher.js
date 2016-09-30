@@ -32,7 +32,7 @@ ftpFetcher.prototype.list = function (){
     return listDefer.reject("ftp not connected");
 
   else{
-    this.client.list('./masterDataFiles',function (err,files){
+    this.client.list(config.masterDataFilePathOnSAP,function (err,files){
       if(err)
         return listDefer.reject(err);
 
@@ -95,7 +95,7 @@ ftpFetcher.prototype.downloadFiles = function (){
 
   else{
     var file = this.filesArray.shift();
-    self.client.get('./masterDataFiles/'+file.name , function (err,stream){
+    self.client.get(config.masterDataFilePathOnSAP+file.name , function (err,stream){
       if(err){
         return processDefer.reject(err);
       }
@@ -120,16 +120,11 @@ ftpFetcher.prototype.moveFileToArchive = function (fileName){
   var moveDefer = new deferred(),
       self      = this;
 
-
-// for now we won't move files to archive.
-  return moveDefer.resolve(); 
-
-
   if(!fileName){
     return moveDefer.resolve();
   }
-  var oldPath = '/masterDataFiles/'+fileName,
-      newPath = '/archive/'+fileName;
+  var oldPath = config.masterDataFilePathOnSAP+fileName,
+      newPath = config.pathToArchiveDataFiles+fileName;
 
   self.client.rename(oldPath,newPath,function (err,success){
     if(err)
@@ -138,7 +133,7 @@ ftpFetcher.prototype.moveFileToArchive = function (fileName){
     console.log("moved file "+fileName+' to archive');
     return moveDefer.resolve();
   });
-
+  return moveDefer.promise;
 };
 
 ftpFetcher.prototype.uploadFile = function (filePath,destinationPath){

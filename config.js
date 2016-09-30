@@ -26,10 +26,14 @@ var config = {
   baseUrl : 'http://localhost:8000/',
 
   sap_vv_response_path : './vv_form_response/',
+
   uploadFileDir : '/Users/ashish/epfo/public/uploads/',
+  
   vv_form_response : '/Users/ashish/epfo/public/vv_form_response/',
 
   vv_form_sample_download_path : '/Users/ashish/epfo/public/vv_form_sample/vv_form_sample.csv',
+
+  pathToArchiveDataFiles : '/temp/',
 
 };
 
