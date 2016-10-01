@@ -1,0 +1,82 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>CMPFO e-Services</title>
+        <link rel="shortcut icon" href="/../images/favicon.png">
+        
+        <link href="/../css/bootstrap.css" rel="stylesheet">
+        <link href="/../css/custom.css" rel="stylesheet">
+        
+        <link rel="stylesheet" type="text/css" href="/../css/style4.css" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+        <script src="/../js/jquery.form.js"></script>
+
+        <script src="/../js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/../js/employer_autofill_signupform.js"></script>
+        
+    </head>
+
+    <body>
+        <% include ../public/partials/header %>
+        <div class="container-fluid">
+            <div class="row">
+                    <% include ../public/partials/leftSidePane %>
+
+                <div class="col-sm-6" >
+                    <h3 style="text-align:center;"> Welcome <%= user.FULL_NAME %><h3>
+
+      <div class="container-fluid">
+        <table class="table table-bordered  table-hover">
+            <tr>
+                <td>Name:</td>
+                <td><%= user.FULL_NAME%></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><%=user.STREET%>,<%=user.HOUSE_NUM1%>,<%=user.CITY1%>,<%=user.CITY2%>,<%=user.REGION%>,<%user.COUNTRY%>,<%user.POST_CODE1%></td>
+            </tr>
+            <!-- <tr>
+                <td>Registered Unit</td>
+                <td><%=user.REGUNIT%></td>
+            </tr> -->
+            <tr>
+                <td>Legacy No.</td>
+                <td><%=user.BPEXT%></td>
+            <!-- </tr>
+                <td>Designated partner</td>
+                <td><%=user.ZZTITLE1%></td>
+            </tr> -->
+            <tr>
+                <td>PAN No.:</td>
+                <td><%=user.PAN%></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td><%=user.UPDATED_EMAIL%></td>
+            </tr>
+            <tr>
+                <td>Mobile</td>
+                <td><%=user.UPDATED_TEL_NUM%></td>
+            </tr>
+        </table>
+      </div>
+        </div>
+        
+        <% include ../public/partials/rightSidePane %>
+
+        
+        </div>
+        
+            <% include ../public/partials/footer %>
+
+           
+
+    </body>
+
+    </html>

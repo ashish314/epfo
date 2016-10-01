@@ -75,7 +75,7 @@ apiRoutes.prototype.init = function (){
       self.router.get('/form_summary', self.formSummary.bind(self));
       self.router.post('/updateProfile',self.updateProfile.bind(self));
       self.router.get('/autoFill'       , self.autoFillForm.bind(self));
-      self.router.get('/logout'         , self.logout.bind(self));
+      self.router.get('/viewProfile/:uid'    , self.viewProfile.bind(self));
 
       // routes for rendering pages
       self.router.get('/signup_employer', self.signup_employer.bind(self)); // render
@@ -173,9 +173,9 @@ apiRoutes.prototype.updateProfile = function (req,res,next){
   if(!req.user){
     return res.redirect(307,'/');
   }
-
+  
   var self = this,
-      requiredFields = ['mobile' , 'email', ,'new_password','confirm_password'];
+      requiredFields = ['mobile' , 'email' ,'new_password','confirm_password'];
 
   for(var i =0 ;i< requiredFields.length ; i++){
     if(!req.body[requiredFields[i]]){
@@ -215,7 +215,7 @@ apiRoutes.prototype.logout = function (req,res,next){
   }
   else {
     req.logout();
-    return this.successResponse(res,200,'success',"user logged out");
+    return res.redirect(307,'/');
   }
 };
 
@@ -268,6 +268,30 @@ function createCounter(cb){
       return cb(null,counter);
     } 
   });
+};
+
+apiRoutes.prototype.viewProfile = function (req,res,next){
+  var self = this;
+
+  if(!req.user || req.user.PARTNER != req.params.uid){
+    return res.redirect(307,'/');
+  }
+  else{
+    this.mongoObj.masterDataModel.findOne({PARTNER : req.params.uid})
+    .exec(function (err,user){
+      if(err)
+        return self.errorResponse(res,500,'Internal Server Error');
+
+      else if(!user){
+        return self.errorResponse(res,404,"User not found");
+      }
+      else{
+        var result = {};
+        result.user = user;
+        return res.render(__dirname + '/../public/viewProfile.ejs',result);
+      }
+    });
+  }
 };  
 
 apiRoutes.prototype.uploadFile = function (req,res,next){
@@ -503,16 +527,6 @@ apiRoutes.prototype.formSummary = function (req,res,next){
       return res.render(__dirname+'/../public/form_summary.ejs',result);
     }
   }); 
-};
-
-apiRoutes.prototype.logout = function (req,res,next) {
-  if(!req.user){
-    this.errorResponse(res,400,"user not logged in");
-  }
-  else{
-    req.logout();
-    return this.successResponse(res,200,'Logged out successfully');
-  }
 };
 
 apiRoutes.prototype.homepage = function (req,res,next) {

@@ -1,0 +1,34 @@
+<div class="col-sm-3">
+    <div class="panel panel-info">
+        <button type="button" id='vv_sample' class="btn btn-info btn-block btn-md">Download VV Data <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Upload</h3>
+        </div>
+        <a id='homepage' href="/" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
+        <a href="/form_summary" class="list-group-item">Form Summary</a>
+        <a href="#" class="list-group-item">View Summary</a>
+        <a href="#" class="list-group-item">View Statement</a>
+        <a href="#" class="list-group-item">View Member Summary</a>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Challan</h3>
+        </div>
+        <a href="#" class="list-group-item">Generate Challan</a>
+        <a href="#" class="list-group-item">Download Challan</a>
+        <a href="#" class="list-group-item">Cancel Challan</a>
+    </div>
+</div>
+
+<script>
+    function showDiv() {
+        document.getElementById('upload').style.display = "block";
+    };
+
+    $("#vv_sample").click(function (){
+        window.location.href = '/download_vv_form_sample';
+    });   
+
+</script>
