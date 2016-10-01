@@ -114,10 +114,10 @@
              <td>-</td>
            <% } %>
            <%if (filesInfo[i].sap_status === 'success') { %>
-             <td><a id='success' href='<%= baseUrl %>success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
+             <td><a id='success' href='/success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
            <% } %>
            <%if (filesInfo[i].sap_status === 'error') { %>
-             <td><a id='error' href="<%= baseUrl%>error_file_download/<%= filesInfo[i].file_number %>">download</a></td>
+             <td><a id='error' href="/error_file_download/<%= filesInfo[i].file_number %>">download</a></td>
            <% } %>
            <!-- <td><%= filesInfo[i].sap_status %></td> -->
            </tr>
