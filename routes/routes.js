@@ -102,7 +102,7 @@ function checkValid(searchObj,pan,cb){
       cb(null,false,false);
     }
     else{
-      if(user.pan  === pan) 
+      if(user.PAN  === pan) 
         cb(null,true,'Pan is already registered');
       else{
         cb(null,true,'Addhar is already registered');
@@ -586,7 +586,7 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
     }
   }
   
-  checkValid.bind(this)({pan : bodyParams.pan},bodyParams.pan,function (err,found,message){
+  checkValid.bind(this)({PAN : bodyParams.pan},bodyParams.pan,function (err,found,message){
     if(err)
       return self.errorResponse(res,500,"Internal server error");
     else if(found)
@@ -600,13 +600,17 @@ apiRoutes.prototype.signUpEmployer = function (req,res,next){
         else if(!user || _.isEmpty(user) ){
           return self.errorResponse(res,404,"User not found");
         }
-        // else if(user && user.password){
-        //   return self.errorResponse(res,400,"User already signed up");
-        // }
+        else if(user && user.password){
+          return self.errorResponse(res,400,"User already signed up");
+        }
+        else if(user.PAN && bodyParams.pan != user.PAN){
+          return self.errorResponse(res,400,"Pan number do not match");
+        }
         else{
           user.UPDATED_TEL_NUM = req.body['mobile'] || null;
           user.UPDATED_EMAIL   = req.body['email']  || null;
           user.password        = sha1(req.body['password']);
+          user.PAN             = bodyParams.pan;
           user.save(function (err){
             if(err){
               return self.errorResponse(res,500,"Internal server error");
@@ -643,7 +647,7 @@ apiRoutes.prototype.signUpMember = function (req,res,next){
       break;
     }
   } 
-  var search = {$or :[{'pan' : bodyParams.pan},{'addhar' : bodyParams.addhar}] };
+  var search = {$or :[{'PAN' : bodyParams.pan},{'ADDHAR' : bodyParams.addhar}] };
   checkValid.bind(this)(search,bodyParams.pan,function (err,found,message){
     if(err)
       return self.errorResponse(res,500,"Internal server error");
@@ -659,13 +663,21 @@ apiRoutes.prototype.signUpMember = function (req,res,next){
         else if(!user || _.isEmpty(user) ){
           return self.errorResponse(res,404,"User not found");
         }
-        // else if(user && user.password){
-        //   return self.errorResponse(res,400,"User already signed up");
-        // }
+        else if(user && user.password){
+          return self.errorResponse(res,400,"User already signed up");
+        }
+        else if(user.PAN && user.PAN != bodyParams.pan){
+          return self.errorResponse(res,400,"Pan number do not match");
+        }
+        else if(user.ADDHAR && user.ADDHAR != bodyParams.ADDHAR){
+          return self.errorResponse(res,400,"Addhar number do not match");
+        }
         else{
           user.UPDATED_TEL_NUM = req.body['mobile'] || null;
           user.UPDATED_EMAIL   = req.body['email']  || null;
           user.password        = sha1(req.body['password']);
+          user.PAN             = bodyParams.pan;
+          user.ADDHAR          = bodyParams.addhar;
           user.save(function (err){
             if(err){
               return self.errorResponse(res,500,"Internal server error");
