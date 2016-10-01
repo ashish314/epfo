@@ -12,7 +12,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -64,12 +63,12 @@
   <section>
                 <div id="container_buttons">
                     <p>
-                        <a id="mem" class="a_demo_four" href="#">
+                        <a class="a_demo_four" href="/signin_member">
                             Member Log-in
                         </a>
                     </p>
                     <p>
-                        <a id="emp" href="#" class="a_demo_four">
+                        <a href="/signin_employer" class="a_demo_four">
                            Employer Log-in
                         </a>
                     </p>
@@ -127,12 +126,12 @@ Providing a transparent, people-friendly and responsive administration for the b
   <section>
                 <div id="container_buttons">
                     <p>
-                        <a id="reg_mem" class="a_demo_four" href="#">
+                        <a class="a_demo_four" href="/signup_member">
                            Member Registration
                         </a>
                     </p>
                     <p>
-                        <a id="reg_emp" href="http://localhost:8000/signup_employer" class="a_demo_four">
+                        <a href="/signup_employer" class="a_demo_four">
                         Employer Registration
                         </a>
                     </p>
@@ -166,20 +165,6 @@ Providing a transparent, people-friendly and responsive administration for the b
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
-
-    <script>
-      $(document).ready(function (){
-        var mem     = baseUrl + "signin_member";
-        var emp     = baseUrl + "signin_employer";
-        var reg_mem = baseUrl + 'signup_member';
-        var reg_emp = baseUrl + 'signup_employer';
-
-        document.getElementById("mem").setAttribute("href",mem);
-        document.getElementById("emp").setAttribute("href",emp);
-        document.getElementById("reg_mem").setAttribute("href",reg_mem);
-        document.getElementById("reg_emp").setAttribute("href",reg_emp);
-      });
-    </script>
 
   </body>
 

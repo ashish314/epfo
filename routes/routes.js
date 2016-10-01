@@ -493,7 +493,6 @@ apiRoutes.prototype.formSummary = function (req,res,next){
       };
 
       result.user = req.user;
-      result.baseUrl = config.baseUrl;
 
       if(!data)
         result.filesInfo = [];
@@ -518,7 +517,7 @@ apiRoutes.prototype.logout = function (req,res,next) {
 
 apiRoutes.prototype.homepage = function (req,res,next) {
     if(req.user)
-      return res.redirect(307,config.baseUrl + 'landingPage/'+req.user.PARTNER);
+      return res.redirect(307,'/landingPage/'+req.user.PARTNER);
   
     else{
       return res.render(__dirname + '/../public/homepage.html');

@@ -14,7 +14,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
     <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -69,7 +68,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Upload</h3>
                     </div>
-                    <a id='homepage' href="#" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
+                    <a id='homepage' href="/" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
                     <a href="#" class="list-group-item">Form Summary</a>
                     <a href="#" class="list-group-item">View Summary</a>
                     <a href="#" class="list-group-item">View Statement</a>
@@ -163,13 +162,6 @@
         function showDiv() {
             document.getElementById('upload').style.display = "block";
         }
-        </script>
-
-        <script>
-            $(document).ready(function (){
-                document.getElementById("homepage").setAttribute("href",baseUrl);
-            });
-            
         </script>
 
 </footer>

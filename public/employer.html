@@ -13,7 +13,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -153,66 +152,80 @@
 
     <script>
       // submit button javascript for error checking.
-      $("#submit").click(function (e){
-        e.preventDefault();
-        var x = document.forms["myForm"]["pan"].value;
-        var a = $("#signupEmployer").serialize();
-        // [{name : 'field name', value : 'value'}]
-        $.ajax({
-          type : 'POST',
-          url  : baseUrl + 'signupEmployer',
-          data : a,
-          error : function (err){
-            alert(err.responseJSON.message);
-            console.log(err);
-          },
-          success : function (res){
-            // just redirect it to landing page.
-            // user data in res.result. 
+      $(document).ready(function (){
+        $("#submit").click(function (e){
+          e.preventDefault();
+          var x = document.forms["myForm"]["pan"].value;
+          var a = $("#signupEmployer").serialize();
+          // [{name : 'field name', value : 'value'}]
+          $.ajax({
+            type : 'POST',
+            url  : '/signupEmployer',
+            data : a,
+            error : function (err){
+              alert(err.responseJSON.message);
+              console.log(err);
+            },
+            success : function (res){
+              // just redirect it to landing page.
+              // user data in res.result. 
 
-            // (http://localhost:8000/landingPage/2000630242)
-            window.location.href = baseUrl + "landingPage/"+res.result.PARTNER;
-          } 
+              // (http://localhost:8000/landingPage/2000630242)
+              window.location.href = "/landingPage/"+res.result.PARTNER;
+            } 
+          });
         });
       });
+    </script>
 
 
-    </script>
     <script>
-      document.getElementById("email").onchange = function() {verifyEmail()};
-      function verifyEmail() {
-    var x = document.forms["myForm"]["email"].value;
-    // console.log(x);
-    var atpos = x.indexOf("@");
-    var dotpos = x.lastIndexOf(".");
-    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
-        alert("Please enter a VALID E-mail Address");
-        return false;
-    }
-}
+      $(document).ready(function (){
+        document.getElementById("email").onchange = function() {verifyEmail()};
+        function verifyEmail() {
+          var x = document.forms["myForm"]["email"].value;
+          // console.log(x);
+          var atpos = x.indexOf("@");
+          var dotpos = x.lastIndexOf(".");
+          if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+              alert("Please enter a VALID E-mail Address");
+              return false;
+          }
+        }
+      });
+
     </script>
+
+
     <script>
-      document.getElementById("mobile").onchange = function(){verifyMobile()};
-      function verifyMobile(){
-        var x = document.forms["myForm"]["mobile"].value;
-        if(x.length != 10)
-          alert("Please enter VALID Mobile No.");
-        return false;
-      }
+      $(document).ready(function (){
+        document.getElementById("mobile").onchange = function(){verifyMobile()};
+        function verifyMobile(){
+          var x = document.forms["myForm"]["mobile"].value;
+          if(x.length != 10)
+            alert("Please enter VALID Mobile No.");
+          return false;
+        }  
+      });
+      
     </script>
+
+
     <script >
-      document.getElementById("pan").onchange = function(){verifyPan()};
-      function verifyPan(){
-      //function for check if user enters pan no before uid
-        var x = document.forms["myForm"]["pan"].value;
+      $(document).ready(function (){
+        document.getElementById("pan").onchange = function(){verifyPan()};
+        function verifyPan(){
+        //function for check if user enters pan no before uid
+          var x = document.forms["myForm"]["pan"].value;
 
-        if(!pan_no && x.length!=10){
-         alert("Please enter VALID Pan No."); 
+          if(!pan_no && x.length!=10){
+           alert("Please enter VALID Pan No."); 
+          }
+          if(pan_no && x!= pan_no){
+            alert("Please enter correct pan number"); 
+          }
         }
-        if(pan_no && x!= pan_no){
-          alert("Please enter correct pan number"); 
-        }
-      }
+      });
     </script>
 
   </body>

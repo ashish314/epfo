@@ -27,7 +27,7 @@
 <body>
     <nav class="navbar navbar-default">
         <div class="jumbotron banner">
-            <a href="/index.html"><img src="/../logo.png" /></a>
+            <a href="/"><img src="/../logo.png" /></a>
         </div>
         <div class="container-fluid">
             <div class="navbar-header">
@@ -70,7 +70,7 @@
                         <h3 class="panel-title">Upload</h3>
                     </div>
                     <a href="#" class="list-group-item" onclick="showDiv()">Upload VV Form</a>
-                    <a id="summ" href="#" class="list-group-item">Form Summary</a>
+                    <a href="/form_summary" class="list-group-item">Form Summary</a>
                     <a href="#" class="list-group-item">View Summary</a>
                      <a href="#" class="list-group-item">View Statement</a>
                       <a href="#" class="list-group-item">View Member Summary</a>
@@ -185,15 +185,15 @@
            $('#logout_btn').click(function (e){
             e.preventDefault();
             $.ajax({
-              url : baseUrl + 'logout',
+              url : '/logout',
               type : 'GET',
               error : function (err){
-                window.location.href = baseUrl;
+                window.location.href = '/';
               },
               success : function (){
                 alert("logged out successfully");
                 setTimeout(function (){
-                  window.location.href = baseUrl;
+                  window.location.href = '/';
                 },0);
               }
             });
@@ -205,7 +205,7 @@
                 // check for valid field values.
                 e.preventDefault();
                 $(this).ajaxSubmit({
-                    url   : baseUrl + 'uploadFile', 
+                    url   : '/uploadFile', 
                     error : function (err){
                         console.log(err);
                         if(err.status === 500){
@@ -223,13 +223,6 @@
                 });
                 return false;
             });
-       </script>
-
-       <script>
-       $(document).ready(function (){
-        var summ = baseUrl + "form_summary";
-        document.getElementById("summ").setAttribute("href",summ);
-       });
        </script>
 
 </body>

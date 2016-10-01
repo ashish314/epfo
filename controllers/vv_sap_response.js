@@ -276,7 +276,7 @@ exports = module.exports = kickStartProcess;
 
 setInterval(function (){
   kickStartProcess();   
-},30000);
+},3000);
 
 
 

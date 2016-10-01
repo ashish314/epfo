@@ -206,15 +206,15 @@
            $('#logout_btn').click(function (e){
             e.preventDefault();
             $.ajax({
-              url : baseUrl + 'logout',
+              url : '/logout',
               type : 'GET',
               error : function (err){
-                window.location.href = baseUrl;
+                window.location.href = '/';
               },
               success : function (){
                 alert("logged out successfully");
                 setTimeout(function (){
-                  window.location.href = baseUrl;
+                  window.location.href = '/';
                 },0);
               }
             });

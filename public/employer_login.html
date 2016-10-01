@@ -13,7 +13,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <script src="js/constant.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -24,7 +23,7 @@
 <body>
 <nav class="navbar navbar-default">
  <div class="jumbotron banner">
-  <a href="/index.html"><img src="logo.png"/></a>
+  <a href="/"><img src="logo.png"/></a>
   </div>
   <div class="container-fluid">
     <div class="navbar-header">
@@ -123,27 +122,27 @@
 
     <script>
     // submit button javascript for error checking.
-    $("#submit").click(function (e){
-      e.preventDefault();
-      var a = $("#employer_login").serialize();
-      // [{name : 'field name', value : 'value'}]
-      $.ajax({
-        type : 'POST',
-        url  : baseUrl + 'signinEmployer',
-        data : a,
-        error : function (err){
-          alert(err.responseJSON.message);
-          console.log(err);
-        },
-        success : function (res){
-          // just redirect it to landing page.
-          // user data in res.result. 
-          window.location.href = baseUrl + "landingPage/"+res.result.PARTNER;
-        } 
+    $(document).ready(function (){
+      $("#submit").click(function (e){
+        e.preventDefault();
+        var a = $("#employer_login").serialize();
+        // [{name : 'field name', value : 'value'}]
+        $.ajax({
+          type : 'POST',
+          url  : '/signinEmployer',
+          data : a,
+          error : function (err){
+            alert(err.responseJSON.message);
+            console.log(err);
+          },
+          success : function (res){
+            // just redirect it to landing page.
+            // user data in res.result. 
+            window.location.href = "/landingPage/"+res.result.PARTNER;
+          } 
+        });
       });
     });
-
-
     </script>
 
   </body>
