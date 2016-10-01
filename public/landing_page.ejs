@@ -158,63 +158,12 @@
             </div>
 
             <a href="#" class="list-group-item">View Profile</a>
-         <a data-popup-open="popup-1" href="#" class="list-group-item">Edit Profile</a>
+            <a href="#" class="list-group-item">Edit Mobile No.</a>
+            <a href="#" class="list-group-item">Edit Email</a>
+            <a href="#" class="list-group-item">Edit Password</a>
         </div>
-             <!-- popup items -->
-<div class="popup" data-popup="popup-1">
-    <div class="popup-inner">
-   <div class="container">
-    <div class="row">
-    <h4 >Edit Profile</h4>
-      <!-- edit form column -->
-      <div class="col-md-9 personal-info">        
-        <form class="form1-horizontal" role="form" action="#" name="EditForm" id="updateProfile" style="margin-left: 0px;max-width: 500px;">
-        <div class="alert alert-info alert-dismissable">
-          <a class="panel-close close" data-dismiss="alert">×</a> 
-          <i class="fa fa-coffee"></i>
-          Provide details which you want to change and click save changes.
-        </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label">Mobile No.</label>
-            <div class="col-lg-8">
-              <input name="mobile" class="form-control" type="text" value="<%=TEL_NUM%>">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label">Email:</label>
-            <div class="col-lg-8">
-              <input  name="email" class="form-control" type="text" value="<%=EMAIL%>">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">New Password:</label>
-            <div class="col-md-8">
-              <input name="new_password" class="form-control" type="password" value="" id="newP">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">Confirm password:</label>
-            <div class="col-md-8">
-              <input name="confirm_password" class="form-control" type="password" value="" id="oldP">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-              <input id="save_changes" type="submit" class="btn btn-success" value="Save Changes">
-              <!-- <span></span> -->
-              <!-- <input type="reset" class="btn btn-default" value="Cancel"> -->
-            </div>
-          </div>
-        </form>
-      </div>
-  </div>
-</div>
-        <a class="popup-close" data-popup-close="popup-1" href="#"></a>
     </div>
-</div>
-<!-- popup items end -->
-    
+    </div>
     </div>
     <div class="navbar navbar-default_footer navbar-fixed-bottom">
         <div class="container">
@@ -275,52 +224,6 @@
                 return false;
             });
        </script>
-            <script >
-       $(document).ready(function(){
-    //----- OPEN
-    $('[data-popup-open]').on('click', function(e)  {
-        var targeted_popup_class = jQuery(this).attr('data-popup-open');
-        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
- 
-        e.preventDefault();
-    });
- 
-    //----- CLOSE
-    $('[data-popup-close]').on('click', function(e)  {
-        var targeted_popup_class = jQuery(this).attr('data-popup-close');
-        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
- 
-        e.preventDefault();
-    });
-
-});
-       </script>
-      <script >
-          $(document).ready(function(){
-$("#save_changes").click(function(e){
-            e.preventDefault();
-               var a = getElementById("newP").value;
-               var b = getElementById("oldP").value;
-               if(a!=b){
-                     alert("Please enter same password");
-                       }
-               else{
-               var a = $("updateProfile").serialize();
-               $.ajax({
-                       type: "POST",
-                       url : baseUrl + "updateProfile",
-                       data: a,
-                  error: function(err){
-                          alert(err.responseJSON.message);
-                                    },
-                  success:function(res){
-                  window.location.reload();
-        }
-    })
-  }
-});
-});
-      </script>
 
 </body>
 
