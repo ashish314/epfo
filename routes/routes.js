@@ -549,9 +549,18 @@ apiRoutes.prototype.formSummary = function (req,res,next){
   if(!req.user){
     return res.redirect(307,'/');
   }
-  var partner = req.user.PARTNER;
 
-  self.mongoObj.uploadedFileModel.find({user : req.user._id})
+  var searchParams = {
+    user : req.user._id
+  };
+  if(req.query.year)
+    searchParams.year = req.query.year;
+
+  if(req.query.month)
+    searchParams.month = req.query.month;
+
+
+  self.mongoObj.uploadedFileModel.find(searchParams)
   .exec(function (err,data){
     if(err)
       return self.errorResponse(res,500,"Internal server error");
