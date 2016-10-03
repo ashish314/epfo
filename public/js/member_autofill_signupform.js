@@ -1,42 +1,45 @@
-   var pan_no;
-$("#uid").focusout(function (){
-    var uid = document.getElementById('uid').value;
-    $.ajax
-    ({
-        type  : 'GET',
-        url   : "/autoFill/?uid="+uid+'&bpkind=0001',
-        error : function (res){
-            alert(res.responseJSON.message);
-        },
-        success : function (res){
-            document.getElementById('legacy_number').value = res.result.BPEXT;
-            document.getElementById('name').value          = res.result.FULL_NAME;
-            document.getElementById('address').value       = "address to come";
-            document.getElementById('employer_name').value = "employer name to come";
-            document.getElementById('addhar').value        = res.result.ADDHAR;
-            document.getElementById('employer_name').value = res.result.employer_name;
-            pan_no                                         = res.result.PAN;
-        },
-    });
-});
+var pan_no;
 
-$("#legacy_number").focusout(function (){
-    var legacy_number = document.getElementById('legacy_number').value;
-    $.ajax
-    ({
-        type  : 'GET',
-        url   : "/autoFill/?legacy_number="+legacy_number+'&bpkind=0001',
-        error : function (res){
-            alert(res.responseJSON.message);
-        },
-        success : function (res){
-            document.getElementById('uid').value = res.result.PARTNER;
-            document.getElementById('name').value = res.result.FULL_NAME;
-            document.getElementById('address').value = "address to come";
-            document.getElementById('employer_name').value = "employer name to come";
-            document.getElementById('addhar').value = res.result.ADDHAR;
-            document.getElementById('employer_name').value = res.result.employer_name;
-            pan_no                                         = res.result.PAN;
-        },
+$(document).ready(function (){
+    $("#uid").focusout(function (){
+        var uid = document.getElementById('uid').value;
+        $.ajax
+        ({
+            type  : 'GET',
+            url   : "/autoFill/?uid="+uid+'&bpkind=0001',
+            error : function (res){
+                alert(res.responseJSON.message);
+            },
+            success : function (res){
+                document.getElementById('legacy_number').value = res.result.BPEXT;
+                document.getElementById('name').value          = res.result.FULL_NAME;
+                document.getElementById('address').value       = "address to come";
+                document.getElementById('employer_name').value = "employer name to come";
+                document.getElementById('addhar').value        = res.result.ADDHAR;
+                document.getElementById('employer_name').value = res.result.employer_name;
+                pan_no                                         = res.result.PAN;
+            },
+        });
+    });
+
+    $("#legacy_number").focusout(function (){
+        var legacy_number = document.getElementById('legacy_number').value;
+        $.ajax
+        ({
+            type  : 'GET',
+            url   : "/autoFill/?legacy_number="+legacy_number+'&bpkind=0001',
+            error : function (res){
+                alert(res.responseJSON.message);
+            },
+            success : function (res){
+                document.getElementById('uid').value = res.result.PARTNER;
+                document.getElementById('name').value = res.result.FULL_NAME;
+                document.getElementById('address').value = "address to come";
+                document.getElementById('employer_name').value = "employer name to come";
+                document.getElementById('addhar').value = res.result.ADDHAR;
+                document.getElementById('employer_name').value = res.result.employer_name;
+                pan_no                                         = res.result.PAN;
+            },
+        });
     });
 });

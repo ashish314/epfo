@@ -1,43 +1,46 @@
     var pan_no;
-$("#uid").focusout(function (){
-    var uid = document.getElementById('uid').value;
-    if(uid){
-        $.ajax
-        ({
-            type  : 'GET',
-            url   : "/autoFill/?uid="+uid+'&bpkind=0003',
-            error : function (res){
-                alert(res.responseJSON.message);
-            },
-            success : function (res){
-                document.getElementById('legacy_number').value      = res.result.BPEXT;
-                document.getElementById('name').value               = res.result.FULL_NAME;
-                document.getElementById('address').value            = "address to come";
-                document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
-                                                          pan_no    = res.result.PAN;
-                // add a check on submit that provided pan and fetched pan are matched
-            },
-        });
-    }
-});
 
-$("#legacy_number").focusout(function (){
-    var legacy_number = document.getElementById('legacy_number').value;
-    if(legacy_number){
-        $.ajax
-        ({
-            type  : 'GET',
-            url   : "/autoFill/?legacy_number="+legacy_number+'&bpkind=0003',
-            error : function (res){
-                alert(res.responseJSON.message);
-            },
-            success : function (res){
-                document.getElementById('uid').value                = res.result.PARTNER;
-                document.getElementById('name').value               = res.result.FULL_NAME;
-                document.getElementById('address').value            = "address to come";
-                document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
-                pan_no                                              = res.result.PAN;
-            },
-        });
-    }
+$(document).ready(function (){
+    $("#uid").focusout(function (){
+        var uid = document.getElementById('uid').value;
+        if(uid){
+            $.ajax
+            ({
+                type  : 'GET',
+                url   : "/autoFill/?uid="+uid+'&bpkind=0003',
+                error : function (res){
+                    alert(res.responseJSON.message);
+                },
+                success : function (res){
+                    document.getElementById('legacy_number').value      = res.result.BPEXT;
+                    document.getElementById('name').value               = res.result.FULL_NAME;
+                    document.getElementById('address').value            = "address to come";
+                    document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
+                                                              pan_no    = res.result.PAN;
+                    // add a check on submit that provided pan and fetched pan are matched
+                },
+            });
+        }
+    }); 
+    
+    $("#legacy_number").focusout(function (){
+        var legacy_number = document.getElementById('legacy_number').value;
+        if(legacy_number){
+            $.ajax
+            ({
+                type  : 'GET',
+                url   : "/autoFill/?legacy_number="+legacy_number+'&bpkind=0003',
+                error : function (res){
+                    alert(res.responseJSON.message);
+                },
+                success : function (res){
+                    document.getElementById('uid').value                = res.result.PARTNER;
+                    document.getElementById('name').value               = res.result.FULL_NAME;
+                    document.getElementById('address').value            = "address to come";
+                    document.getElementById('designated_partner').value = res.result.ZZFULL_NAME;
+                    pan_no                                              = res.result.PAN;
+                },
+            });
+        }
+    });
 });
