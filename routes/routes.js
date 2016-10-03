@@ -329,20 +329,22 @@ apiRoutes.prototype.uploadFile = function (req,res,next){
   csvToJson(req.file.path,[],function (err,resultArray){
     if(err){
       console.log(err);
+      fs.unlinkSync(req.file.path);
       return self.errorResponse(res,400,"Some error occured in file");
     }
     else if(resultArray.length === 0){
+      fs.unlinkSync(req.file.path);
       return self.errorResponse(res,400,"File cannot be empty");
     }
     else if(resultArray.length < 4){
+      fs.unlinkSync(req.file.path);
       return self.errorResponse(res,400,"Please check the file format");
     }
     else{
       resultArray.splice(0,3);
       for(var i = 0 ; i < resultArray.length ; i++){
-
-        if(!resultArray[i].Year || !resultArray[i].Month || 
-            resultArray[i].Year != req.body.year || resultArray[i].Month != req.body.month){
+        if(resultArray[i]['Emp Code'] && (!resultArray[i].Year || !resultArray[i].Month || 
+            resultArray[i].Year != req.body.year || resultArray[i].Month != req.body.month)){
 
           fs.unlinkSync(req.file.path);
           return self.errorResponse(res,400,"Please check Year and Month in file");
