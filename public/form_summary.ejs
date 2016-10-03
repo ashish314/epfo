@@ -13,7 +13,7 @@
     <link href="css/custom.css" rel="stylesheet">
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
     <link rel="stylesheet" type="text/css" href="css/style4.css" />
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <script src="js/bootstrap.min.js"></script>
@@ -29,80 +29,98 @@
             <% include ../public/partials/leftSidePane %>
 
             <div class="col-sm-6">
-            <h3 style="text-align:center;"> Welcome <%= user.FULL_NAME %></h3>
-            <form id='filter'>
-              <div class="form-group">
-                <label for="sel1">Select year</label>
-                <select class="form-control" name='year' id="year">
-                  <option value='2016'>2016</option>
-                  <option value='2015'>2015</option>
-                  <option value='2014'>2014</option>
-                  <option value='2013'>2013</option>
-                  <option value='2012'>2012</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="sel1">Select list:</label>
-                <select class="form-control" name='month' id="month">
-                  <option value='1'>January</option>
-                  <option value='2'>February</option>
-                  <option value='3'>March</option>
-                  <option value='4'>April</option>
-                  <option value='5'>May</option>
-                  <option value='6'>June</option>
-                  <option value='7'>July</option>
-                  <option value='8'>August</option>
-                  <option value='9'>September</option>
-                  <option value='10'>October</option>
-                  <option value='11'>November</option>
-                  <option value='12'>December</option>
-                </select>
-              </div>
-                <input type="submit" class="btn btn-success" value="Apply">
-            </form>
-            <input id='clear' type='button' class="btn btn-success" value='clear'> 
+                       <h3 style="text-align:center;"> Welcome <%= user.FULL_NAME %></h3>
+                       <!-- filter start -->
+                   <div class="row">
+                   <!-- <form id='filter'> -->
+                         <div class="col-md-3">    
+                              <!-- <div class="form-group"> -->
+                                   <label for="sel1">Select year</label>
+                                      <br>
+                                         <select class="form-control" name='year' id="year">
+                                          <option value='2016'>2016</option>
+                                          <option value='2015'>2015</option>
+                                          <option value='2014'>2014</option>
+                                          <option value='2013'>2013</option>
+                                          <option value='2012'>2012</option>
+                                        </select>
+                              <!-- </div> -->
+                        </div>
+                        <div class="col-md-3">
+                                <!-- <div class="form-group"> -->
+                                       <label for="sel1">Select month:</label>
+                                            <select class="form-control" name='month' id="month">
+                                              <option value='1'>January</option>
+                                              <option value='2'>February</option>
+                                              <option value='3'>March</option>
+                                              <option value='4'>April</option>
+                                              <option value='5'>May</option>
+                                              <option value='6'>June</option>
+                                              <option value='7'>July</option>
+                                              <option value='8'>August</option>
+                                              <option value='9'>September</option>
+                                              <option value='10'>October</option>
+                                              <option value='11'>November</option>
+                                              <option value='12'>December</option>
+                                            </select>
+                                <!-- </div> -->
+                        </div>
+                  <!--  </div>        
+
+
+                   <div class="row"> -->
+                        <div class="col-md-3" style="padding-top:18px;">
+                            <input type="button" id='apply' class="btn btn-success btn-md" value="Apply">
+                        </div>
+
+                        <div class="col-md-3" style="padding-top:18px;"">
+                            <input id='clear' type='button' class="btn btn-success btn-md" value='clear'> 
+                        </div>
+                   </div>
             
+                <!-- </form>       -->
 
-  <div id="container-fluid">
-   <table class="table table-bordered table-striped table-hover">
-    <thead>
-      <tr>
-        <th>S.No.</th>
-        <th>File Name</th>
-        <th>Fin-Year</th>
-        <th>Month</th>
-        <th>Upload Date</th>
-        <th>Status</th>
-        <th>Response File</th>
-      </tr>
-    </thead>
+                       <!-- filter end -->
+             
+                <div id="container-fluid">
+                       <table class="table table-bordered table-striped table-hover">
+                             <thead>
+                                  <tr>
+                                    <th>S.No.</th>
+                                    <th>File Name</th>
+                                    <th>Fin-Year</th>
+                                    <th>Month</th>
+                                    <th>Upload Date</th>
+                                    <th>Status</th>
+                                    <th>Response File</th>
+                                  </tr>
+                             </thead>
 
-    <tbody>
+                               <tbody>
       
-        <% for(var i=0; i<filesInfo.length; i++) {%>
-            <tr>
-           <td><%= i+1 %></td>
-           <td><%= filesInfo[i].file_name %></td>
-           <td><%= filesInfo[i].year %></td>
-           <td><%= filesInfo[i].month %></td>
-           <td><%= filesInfo[i].uploaded_date %></td>
-           <td><%= filesInfo[i].sap_status %></td>
-           <%if (filesInfo[i].sap_status === 'pending') { %>
-             <td>-</td>
-           <% } %>
-           <%if (filesInfo[i].sap_status === 'success') { %>
-             <td><a id='success' href='/success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
-           <% } %>
-           <%if (filesInfo[i].sap_status === 'error') { %>
-             <td><a id='error' href="/error_file_download/<%= filesInfo[i].file_number %>">download</a></td>
-           <% } %>
-           </tr>
-        <% } %>
-      
-    </tbody>
-  </table>
-        </div>
-    </div>
+                              <% for(var i=0; i<filesInfo.length; i++) {%>
+                                  <tr>
+                                 <td><%= i+1 %></td>
+                                 <td><%= filesInfo[i].file_name %></td>
+                                 <td><%= filesInfo[i].year %></td>
+                                 <td><%= filesInfo[i].month %></td>
+                                 <td><%= filesInfo[i].uploaded_date %></td>
+                                 <td><%= filesInfo[i].sap_status %></td>
+                                 <%if (filesInfo[i].sap_status === 'pending') { %>
+                                   <td>-</td>
+                                 <% } %>
+                                 <%if (filesInfo[i].sap_status === 'success') { %>
+                                   <td><a id='success' href='/success_file_download/<%= filesInfo[i].file_number %>'>download</a></td>
+                                 <% } %>
+                                 <%if (filesInfo[i].sap_status === 'error') { %>
+                                   <td><a id='error' href="/error_file_download/<%= filesInfo[i].file_number %>">download</a></td>
+                                 <% } %>
+                                 </tr>
+                              <% } %>
+                              </tbody>
+                           </table>
+                       </div>
+                 </div>
     <!-- Div for form summary table -->
     <div>
         
@@ -134,10 +152,12 @@
           }
       })();
 
-      $('#filter').submit(function (e){
-        e.preventDefault();
-        var year = document.forms["filter"]["year"].value;
-        var month = document.forms["filter"]["month"].value;
+      $('#apply').click(function (e){
+        // var year = document.forms["filter"]["year"].value;
+        var year = $('#year option:selected').val();
+        var month = $('#month option:selected').val();
+          
+        // var month = document.forms["filter"]["month"].value;
         window.location.href = '/form_summary?year='+year+'&month='+month;
       });
 
