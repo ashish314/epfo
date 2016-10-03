@@ -7,6 +7,7 @@ var EXPRESS               = require('express'),
     inWordsEn             = require('in-words').en,
     REQUEST               = require('request'),
     deferred              = require('deferred'),
+    csvParser             = require('csv-parser'),
     authenticate          = require(__dirname + '/../controllers/userAuthentication/userAuthentication.js'),
     multer                = require('multer'),
     config                = require(__dirname + '/../config.js'),
@@ -168,23 +169,36 @@ function query_on_uid_or_legacy(uid,legacy_number,bpkind,cb){
   }
 };
 
+function csvToJson(filePath,resultArray,cb){
+  fs.createReadStream(filePath)
+  .pipe(csvParser())
+  .on('data', function (data) {
+    resultArray.push(data);
+  })
+  .on('error', function (err){
+    cb(err,null);
+  })
+  .on('end',function (){
+    cb(null,resultArray);
+  });
+};
 
 apiRoutes.prototype.updateProfile = function (req,res,next){
   if(!req.user){
     return res.redirect(307,'/');
   }
-  
+
   var self = this,
+      fieldsToUpdate = {},
       requiredFields = ['mobile' , 'email' ,'new_password','confirm_password'];
 
   for(var i =0 ;i< requiredFields.length ; i++){
-    if(!req.body[requiredFields[i]]){
-      return self.errorResponse(res,400,requiredFields[i]+ " is required");
-      break;
+    if(req.body[requiredFields[i]]){
+      fieldsToUpdate[requiredFields[i]] = req.body[requiredFields[i]];
     }
   } 
 
-  if(req.body.new_password != req.body.confirm_password){
+  if(req.body.new_password && req.body.new_password != req.body.confirm_password){
     return self.errorResponse(res,400,"Passwords do not match");
   }
 
@@ -194,9 +208,13 @@ apiRoutes.prototype.updateProfile = function (req,res,next){
       return self.errorResponse(res,400,"Internal server error");
     }
     else{
-      user.UPDATED_EMAIL    = req.body.email;
-      user.UPDATED_TEL_NUM  = req.body.mobile;
-      user.password         = sha1(req.body.new_password);
+      user.UPDATED_EMAIL    = req.body.email  || user.UPDATED_EMAIL;
+      user.UPDATED_TEL_NUM  = req.body.mobile || user.UPDATED_TEL_NUM;
+      
+      if(req.body.new_password){
+        user.password = sha1(req.body.new_password);
+      }
+
       user.save(function (err){
         if(err){
           return self.errorResponse(res,400,"Internal server error");
@@ -299,46 +317,71 @@ apiRoutes.prototype.uploadFile = function (req,res,next){
   if(!req.user || req.user.BPKIND != '0003'){
     return this.errorResponse(res,400,'user not authorized');
   }
-  // else if(!req.files){
-  //   return this.errorResponse(res,400,'No file selected');
-  // }
-  // add a check for allowed file types as well.
+  else if(!req.file){
+    return this.errorResponse(res,400,'No file selected');
+  }
+  
   var self = this;
   if(!req.file){
     return this.errorResponse(res,400,"No file selected");
   }
 
-  // increment counter and create a entry in uploadFile
-  createCounter.bind(this)(function (err,counter){
-    var uploadFile = new self.mongoObj.uploadedFileModel();
-    uploadFile.user               = req.user._id;
-    uploadFile.uploaded_date      = Date.now();
-    uploadFile.year               = req.body.year;
-    uploadFile.month              = req.body.month;
-    uploadFile.status             = 'uploaded';
-    uploadFile.sap_status         = 'pending';
-    uploadFile.file_number        = counter.file_number;
-    uploadFile.file_name          = String(counter.file_number)+'_'+String(req.user.PARTNER);
-    uploadFile.original_file_name = String(req.file.originalname);
+  csvToJson(req.file.path,[],function (err,resultArray){
+    if(err){
+      console.log(err);
+      return self.errorResponse(res,400,"Some error occured in file");
+    }
+    else if(resultArray.length === 0){
+      return self.errorResponse(res,400,"File cannot be empty");
+    }
+    else if(resultArray.length < 4){
+      return self.errorResponse(res,400,"Please check the file format");
+    }
+    else{
+      resultArray.splice(0,3);
+      for(var i = 0 ; i < resultArray.length ; i++){
 
-    uploadFile.save(function (err){
-      if(err)
-        self.errorResponse(res,500,"Internal server error");
+        if(!resultArray[i].Year || !resultArray[i].Month || 
+            resultArray[i].Year != req.body.year || resultArray[i].Month != req.body.month){
 
-      counter.file_number = counter.file_number + 1;
-      counter.save(function (err){
-        if(err)
-          self.errorResponse(res,500,"Internal server error");
+          fs.unlinkSync(req.file.path);
+          return self.errorResponse(res,400,"Please check Year and Month in file");
+          break;
+        }
+      }
+      // increment counter and create a entry in uploadFile
+      createCounter.bind(self)(function (err,counter){
+        var uploadFile = new self.mongoObj.uploadedFileModel();
+        uploadFile.user               = req.user._id;
+        uploadFile.uploaded_date      = Date.now();
+        uploadFile.year               = req.body.year;
+        uploadFile.month              = req.body.month;
+        uploadFile.status             = 'uploaded';
+        uploadFile.sap_status         = 'pending';
+        uploadFile.file_number        = counter.file_number;
+        uploadFile.file_name          = String(counter.file_number)+'_'+String(req.user.PARTNER);
+        uploadFile.original_file_name = String(req.file.originalname);
 
-        ftp.uploadFile(req.file.path, '/vv_forms/'+uploadFile.file_name)
-        .then(function (){
-          self.successResponse(res,200,"success","File upload successfully");
-        },function (err){
-          console.log(err);
-          self.errorResponse(res,400,"failed to upload");
+        uploadFile.save(function (err){
+          if(err)
+            self.errorResponse(res,500,"Internal server error");
+
+          counter.file_number = counter.file_number + 1;
+          counter.save(function (err){
+            if(err)
+              self.errorResponse(res,500,"Internal server error");
+
+            ftp.uploadFile(req.file.path, '/vv_forms/'+uploadFile.file_name)
+            .then(function (){
+              self.successResponse(res,200,"success","File upload successfully");
+            },function (err){
+              console.log(err);
+              self.errorResponse(res,400,"failed to upload");
+            });
+          })
         });
-      })
-    });
+      });
+    }
   });
 };
 
@@ -460,6 +503,9 @@ apiRoutes.prototype.successFileDownload = function (req,res,next) {
       parser.parseString(contents,function (err,data){
         var parsedData = data['asx:abap']['asx:values'][0]['TAB'][0]['FINAL'][0];
         var updatedJson = {};
+        var currentMonth  = new Date().getMonth() + 1;
+        var currentYear   = new Date().getYear();
+        var lastDate      = new Date(currentYear,currentMonth,0);  
 
         updatedJson.PROCESSID = parsedData.PROCESSID[0];
         updatedJson.STATUS    = parsedData.STATUS[0];
@@ -481,7 +527,7 @@ apiRoutes.prototype.successFileDownload = function (req,res,next) {
         updatedJson.ZYEAR     = parsedData.ZYEAR[0];
         updatedJson.ZMONTH    = parsedData.ZMONTH[0];
         updatedJson.CUR_TYPE  = parsedData.CUR_TYPE[0];
-        updatedJson.ENT_DATE  = parsedData.ENT_DATE[0]; 
+        updatedJson.ENT_DATE  = lastDate.getDay() + '-' + lastDate.getMonth() + '-' + lastDate.getYear();
         updatedJson.XBLNR     = parsedData.XBLNR[0];
         updatedJson.UNIT_NAME = fileInfo.user.FULL_NAME;
         updatedJson.FULL_NAME = fileInfo.user.FULL_NAME;
@@ -489,7 +535,6 @@ apiRoutes.prototype.successFileDownload = function (req,res,next) {
         updatedJson.PC_SUM    = (parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP)).toFixed(2);
         updatedJson.PC_SUM    = (parseFloat(updatedJson.PC_MEM) + parseFloat(updatedJson.PC_EMP)).toFixed(2);
         updatedJson.AMT_WORDS = inWordsEn(updatedJson.TOT_CONT);
-
 
         return res.render(__dirname + '/../public/challan.ejs',updatedJson);  
 

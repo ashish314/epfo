@@ -13,6 +13,8 @@
     <!-- <link rel="stylesheet" type="text/css" href="css/demo.css" /> -->
         <link rel="stylesheet" type="text/css" href="css/style4.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -129,6 +131,10 @@
           <input type="password" name="password" id="password" required/>
           <div class="validation"></div>
         </div>
+        <div class="form-group">
+          <p>Captcha<span>*</span></p>
+          <div class="g-recaptcha" data-sitekey="6Lc9DggUAAAAAOrHrLSt0zut2sD61q31yCja64a-"></div>
+        </div>
     
     </div>
     <button type = "submit" class="bouton-contact" id='submit'>Submit</button>
@@ -155,25 +161,32 @@
       $(document).ready(function (){
         $("#submit").click(function (e){
           e.preventDefault();
-          var x = document.forms["myForm"]["pan"].value;
-          var a = $("#signupEmployer").serialize();
-          // [{name : 'field name', value : 'value'}]
-          $.ajax({
-            type : 'POST',
-            url  : '/signupEmployer',
-            data : a,
-            error : function (err){
-              alert(err.responseJSON.message);
-              console.log(err);
-            },
-            success : function (res){
-              // just redirect it to landing page.
-              // user data in res.result. 
+          var captcha=grecaptcha.getResponse();
+          if(captcha!=''){
+            var x = document.forms["myForm"]["pan"].value;
+            var a = $("#signupEmployer").serialize();
+            // [{name : 'field name', value : 'value'}]
+            $.ajax({
+              type : 'POST',
+              url  : '/signupEmployer',
+              data : a,
+              error : function (err){
+                alert(err.responseJSON.message);
+                console.log(err);
+              },
+              success : function (res){
+                // just redirect it to landing page.
+                // user data in res.result. 
 
-              // (http://localhost:8000/landingPage/2000630242)
-              window.location.href = "/landingPage/"+res.result.PARTNER;
-            } 
-          });
+                // (http://localhost:8000/landingPage/2000630242)
+                window.location.href = "/landingPage/"+res.result.PARTNER;
+              } 
+            });
+          }
+          else{
+            alert("Please check captcha");
+            return false;
+          }
         });
       });
     </script>

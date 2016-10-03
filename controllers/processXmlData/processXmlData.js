@@ -1,5 +1,8 @@
 var deferred  = require('deferred');
 
+
+// need to ensure that we do not insert duplicate records and update record data
+// appropriately
 function processXmlData(){
   this.record = null;
   this.totalProcessed = 0;
