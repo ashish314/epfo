@@ -40,7 +40,7 @@ masterDataProcessor.prototype.init = function (){
     return self.readXmlDataObj.init();
   })
   .then(function (){
-    return self.processXmlDataObj.init();
+    return self.processXmlDataObj.init(self.mongoObj);
   })
   .then(function (){
     return self.storeXmlDataObj.init(self.mongoObj);

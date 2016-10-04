@@ -22,13 +22,18 @@ storeXmlData.prototype.init = function (mongoObj){
 
 // toDO : need to check before inserting that record exists or not.
 
+// record here is an object like {data : user, existing : true}
 storeXmlData.prototype.storeRecord = function (record,options){
   var storeDefer = new deferred(),
       self       = this;
   if(!this.mongo)
     return storeDefer.reject("Mongo not initialized");
 
-  this.mongo.masterDataModel.create(record,function (defer,err,result){
+  if(record.existing || !record.data)
+    return storeDefer.resolve();
+
+
+  this.mongo.masterDataModel.create(record.data,function (defer,err,result){
     if(err){
       console.log(err);
       return defer.resolve();
